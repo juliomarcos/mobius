@@ -1,0 +1,314 @@
+<title>Mobius Artist Workflows</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #16202c;
+  --muted: #566273;
+  --line: #d3dae3;
+  --face: #e9eef5;
+  --edge: #8794a6;
+  --accent: #2b55c9;
+  --accent-soft: #dfe7fb;
+  --pole3: #0b8a80;
+  --pole5: #c9711d;
+  --pole6: #c0364a;
+  --ghost: #aab4c2;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+    --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+    --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+  --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+  --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { display: grid; gap: 56px; max-width: 1040px; margin: 0 auto; min-width: 0; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 650; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; min-width: 0; }
+.stack { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.13rem; color: var(--ink); max-width: 64ch; }
+.muted { color: var(--muted); }
+a { color: var(--accent); overflow-wrap: anywhere; }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; overflow-wrap: anywhere; }
+header.top { display: grid; gap: 16px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: 500 0.85rem var(--font-body); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.note { font-size: 0.92rem; color: var(--muted); }
+.note strong { color: var(--ink); }
+.callout { border-left: 3px solid var(--pole5); padding-left: 10px; }
+ul.points { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+
+/* Primer cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 14px; }
+.cards .panel { padding: 16px 18px; }
+.cards .panel p { font-size: 0.95rem; }
+.cards .panel .links { font-size: 0.85rem; color: var(--muted); }
+
+/* Decisions */
+.decision { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.decision .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.idea { background: var(--face); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+.idea .eyebrow { color: var(--accent); }
+.idea p { font-size: 0.95rem; }
+.figure { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
+.figure > div { display: grid; gap: 4px; min-width: 0; align-content: start; }
+.figure .cap { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); }
+.code { min-width: 0; overflow-x: auto; background: var(--face); border: 1px solid var(--line); border-radius: 6px; }
+.idea .code { background: var(--surface); }
+.code pre { margin: 0; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; color: var(--ink); tab-size: 4; }
+.code pre code { font-size: inherit; overflow-wrap: normal; }
+.option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; min-width: 0; }
+.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.option input { margin-top: 5px; accent-color: var(--accent); }
+.option strong { font-weight: 600; }
+.option .why { grid-column: 2; font-size: 0.9rem; color: var(--muted); }
+.option .code { grid-column: 2; }
+.rec { font-size: 0.78rem; font-family: var(--font-mono); color: var(--accent); margin-left: 6px; }
+.card-note { width: 100%; font: 0.9rem var(--font-body); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+textarea { width: 100%; min-height: 360px; font: 0.88rem var(--font-mono); padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.status { font-size: 0.88rem; color: var(--muted); min-height: 1.4em; }
+footer { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 10px; font-size: 0.9rem; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+@media (max-width: 640px) {
+  .figure { grid-template-columns: minmax(0, 1fr); }
+  .decision { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); max-width: 100%; }
+table.tools { border-collapse: collapse; min-width: 760px; width: 100%; font-size: 0.9rem; }
+table.tools th, table.tools td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+table.tools th { font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+table.tools tr:last-child td { border-bottom: 0; }
+table.tools td:first-child { font-weight: 600; white-space: nowrap; }
+table.tools tr.us td { background: var(--accent-soft); }
+.tablewrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.diagram { background: var(--face); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: grid; gap: 6px; justify-items: center; min-width: 0; }
+.diagram svg { width: 100%; max-width: 380px; height: auto; display: block; }
+.diagram .cap { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); text-align: center; }
+blockquote.spec { margin: 0; border-left: 3px solid var(--edge); padding: 4px 0 4px 12px; font-size: 0.95rem; color: var(--ink); }
+blockquote.spec cite { display: block; font-style: normal; font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+.option .tr { grid-column: 2; font-size: 0.9rem; color: var(--muted); }
+.option .tr strong { color: var(--ink); font-weight: 600; }
+textarea { min-height: 200px; }
+</style>
+<main>
+  <header class="top">
+    <span class="eyebrow">Decisions · product workflow</span>
+    <h1>What artists already do, and four gaps in the plan</h1>
+    <p class="lede">We looked at six existing retopology tools to see what artists are used to. Four are manual or patch-based. Quad Remesher and Instant Meshes are automatic, and Mobius's planned guidance already goes beyond both. Four workflows that artists rely on are missing or unclear in the plan. Each needs your call before the specs change. Every card has a recommendation already selected, so change only the ones you disagree with.</p>
+    <div class="meta-row"><span>2026-11-20</span><span>4 decisions</span><span>Affects: guidance-constraints, mesh-core, blender-addon, design non-goals</span></div>
+  </header>
+
+  <section aria-labelledby="s-tools">
+    <div class="prose stack">
+      <span class="eyebrow">Background</span>
+      <h2 id="s-tools">The six tools at a glance</h2>
+      <p>Facts below are what each vendor states as of 2026-11-20. Swipe the table sideways on a phone.</p>
+    </div>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="Comparison of six retopology tools">
+      <table class="tools">
+        <thead><tr><th scope="col">Tool</th><th scope="col">What it is</th><th scope="col">How you work</th></tr></thead>
+        <tbody>
+          <tr><td>TopoGun 3</td><td>Standalone app (Windows, macOS), perpetual licence. Strong map baking.</td><td>Manual tools: Create, Bridge, Draw, Brush (vertices stick to the reference surface in real time), Guide Lines, Tubes, Patch (you draw the border, it fills the inside), Morpher (updates the low-poly when the high-poly changes). It also has automatic Retopologize and Remesh, which its own site advises against for production assets where edge flow matters.</td></tr>
+          <tr><td>RetopoFlow 3.4 / v4</td><td>Blender addon, paid, GPL code.</td><td>Fully manual: Contours, PolyStrips, Strokes, PolyPen, Tweak, Relax. Geometry snaps to the high-poly. Partial symmetry support. No automatic retopology.</td></tr>
+          <tr><td>Alpaca3D 0.20</td><td>Free standalone Windows app with Blender and Maya bridges. Retopo, UV and Bake "labs" in one app. The closest to Mobius's suite idea.</td><td>Retopo is manual: Create, Contours, Strokes, Knife, Loop Cut, Fill, Move and Relax brushes, symmetry. The UV lab has edge-direction constraints and a density brush. Automatic retopology and an MCP connection for AI are only on its roadmap.</td></tr>
+          <tr><td>Nitro Retopo 1.8</td><td>Blender addon (5.2+), $25, GPL, released Sep 2026, 300+ sales.</td><td>Hybrid. You draw cuts that split the surface into patches (the cuts also become UV seams), pick a quad pattern per patch, and it generates the mesh. It also has mesh preparation tools (verify, weld, repair holes, decimate a working copy) and is pitched at AI-generated meshes "with fused parts". Its method resembles reading-list entries 27 and 28 (Takayama et al., Sketch-Retopo and Pattern-Based Quadrangulation). One user review says cuts often fail and the flow "doesn't make sense a lot of the time". That fits the method: patch-by-patch patterns do not keep flow consistent across patches, which a global direction field does.</td></tr>
+          <tr><td>Quad Remesher 1.3</td><td>By Exoside. Plugins for Blender, Maya, 3ds Max, Modo, Houdini, Fusion 360 and Nomad Sculpt; built into Cinema 4D R26+ (named "ZRemesher" there). Windows, macOS, Linux. $109.90 perpetual (Pro) or a subscription. The standard automatic remesher today.</td><td>Fully automatic, one click, quad-dominant output. Controls: target quad count, Adaptive Size (smaller quads where the surface curves), Adapt Quad Count (shape or exact count wins), density painted as vertex colours (red = 4× smaller quads, cyan = 4× bigger), symmetry along whole axes. "Guides" force edge loops along existing mesh edges: material borders, face sets, smoothing groups, hard edges, split normals, or hard edges detected by angle. No direction strokes, and guide curves are still marked work in progress. Its manual warns that badly defined guides "can confuse the algorithm".</td></tr>
+          <tr><td>Instant Meshes</td><td>Free research tool (BSD licence) from the SIGGRAPH Asia 2015 paper by Jakob, Tarini, Panozzo and Sorkine-Hornung. Standalone, Windows, macOS, Linux. Last code change in 2019. Modo's automatic retopology has used its algorithm since Modo 10.2. Note: instantmeshes.com is an unrelated, unofficial browser remesher that borrows the name.</td><td>Automatic, in two steps: solve an orientation field, then a position field, then export. Brush tools let you comb the orientation and paint where edges should run, then re-solve. It is the method the Mobius plan builds on (design D6, reading-list entry 18), and the reason artists may already know "combing" a field.</td></tr>
+          <tr class="us"><td>Mobius (planned)</td><td>Engine plus Blender addon.</td><td>Automatic and guided. A smooth cross field over the whole surface, steered by strokes, surface curves, features, density and regions. Partial symmetry.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>What artists will expect from Mobius</h3>
+      <ul class="points">
+        <li><strong>Strokes and guide lines</strong> map to our direction strokes.</li>
+        <li><strong>Contours and loops</strong> map to our surface curves, which force an edge loop.</li>
+        <li><strong>TopoGun Mask</strong> maps to our density painting and region multipliers.</li>
+        <li><strong>Symmetry</strong> on one key.</li>
+        <li><strong>Snap to surface and a relax brush</strong> for touch-ups. Blender and RetopoFlow already do this on our output, so Mobius need not rebuild it.</li>
+      </ul>
+    </div>
+    <p class="note"><strong>Sources:</strong> <a href="https://www.topogun.com/" target="_blank" rel="noopener">topogun.com</a> · <a href="https://github.com/CGCookie/retopoflow" target="_blank" rel="noopener">github.com/CGCookie/retopoflow</a> · <a href="https://docs.retopoflow.com/" target="_blank" rel="noopener">docs.retopoflow.com</a> · <a href="https://alpaca3d.app/" target="_blank" rel="noopener">alpaca3d.app</a> · <a href="https://superhivemarket.com/products/nitro-retopo" target="_blank" rel="noopener">superhivemarket.com/products/nitro-retopo</a> · <a href="https://exoside.com/quadremesher/" target="_blank" rel="noopener">exoside.com/quadremesher</a> (and its 1.3 user manual and release notes) · <a href="https://github.com/wjakob/instant-meshes" target="_blank" rel="noopener">github.com/wjakob/instant-meshes</a>. These are the vendors' own pages. We did not test the tools, and some tool lists are incomplete.</p>
+  </section>
+
+  <section aria-labelledby="s-decisions">
+    <div class="prose stack">
+      <span class="eyebrow">Four decisions</span>
+      <h2 id="s-decisions">Gaps in the plan</h2>
+      <p>Decision 2 depends on decision 1. If you choose A for decision 1, option B of decision 2 is not available.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d1-title" data-num="1" data-title="Hand-made partial low-poly as input">
+      <span class="tag">Decision 1 of 4</span>
+      <h3 id="d1-title">Can an artist give Mobius a hand-made partial low-poly and have it filled in?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>The usual pro workflow is to build the critical loops by hand (eyes, mouth, shoulders, the areas that deform) and let a tool fill the rest. TopoGun's Patch works this way. A Nitro Retopo reviewer asked for a mode that "iterates on a mesh external to the base model".</p>
+        <p><strong>What the plan says now.</strong> The region constraint has a "keep existing topology" override:</p>
+        <blockquote class="spec">keep existing topology (copy the source faces unchanged and stitch them conformingly to the surrounding output)<cite>guidance-constraints spec, region overrides</cite></blockquote>
+        <p>The catch: this copies faces of the <em>source</em> mesh (the high-poly or sculpt). It helps when the input already has a clean hand. It cannot take a separate low-poly piece that the artist built in RetopoFlow or by hand.</p>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 360 260" role="img" aria-label="A face outline with hand-made loops around both eyes and the mouth drawn solid, and a lighter quad grid filling the rest of the face and meeting the loops">
+          <defs><clipPath id="faceclip"><ellipse cx="180" cy="130" rx="112" ry="120"/></clipPath></defs>
+          <ellipse cx="180" cy="130" rx="112" ry="120" fill="var(--surface)" stroke="var(--edge)" stroke-width="2"/>
+          <g clip-path="url(#faceclip)" stroke="var(--ghost)" stroke-width="1.2" fill="none">
+            <path d="M70 0V260M92 0V260M114 0V260M136 0V260M158 0V260M180 0V260M202 0V260M224 0V260M246 0V260M268 0V260M290 0V260"/>
+            <path d="M0 20H360M0 42H360M0 64H360M0 86H360M0 108H360M0 130H360M0 152H360M0 174H360M0 196H360M0 218H360M0 240H360"/>
+          </g>
+          <g stroke="var(--accent)" stroke-width="3">
+            <ellipse cx="138" cy="104" rx="36" ry="21" fill="var(--accent-soft)"/>
+            <ellipse cx="138" cy="104" rx="19" ry="9" fill="var(--surface)"/>
+            <ellipse cx="222" cy="104" rx="36" ry="21" fill="var(--accent-soft)"/>
+            <ellipse cx="222" cy="104" rx="19" ry="9" fill="var(--surface)"/>
+            <ellipse cx="180" cy="190" rx="50" ry="22" fill="var(--accent-soft)"/>
+            <ellipse cx="180" cy="190" rx="28" ry="9" fill="var(--surface)"/>
+          </g>
+        </svg>
+        <span class="cap">Hand-made loops stay exactly as drawn; Mobius fills and stitches the rest.</span>
+      </div>
+      <label class="option"><input type="radio" name="d1" value="0" data-label="A. Not in v1"><strong>A. Not in v1</strong><span class="why">Keep only source-face preservation.</span><span class="tr"><strong>Trade-off:</strong> no extra work. It misses the workflow manual-retopology artists use most, and they must stitch by hand.</span></label>
+      <label class="option"><input type="radio" name="d1" value="1" data-label="B. Locked guide mesh" checked><strong>B. Locked guide mesh<span class="rec">recommended</span></strong><span class="why">A new guidance layer: one or more pieces of low-poly mesh on a separate object, snapped onto the source surface. Their faces are copied unchanged into the output. Their border loops become hard boundaries (like surface curves with a fixed number of edges). Their edge directions steer the field nearby. The solver fills and stitches the rest without gaps or T-junctions.</span><span class="tr"><strong>Trade-off:</strong> it mostly reuses the conforming-seam stitching that the design already plans for "keep existing topology" (D7), which the symmetry service also reuses (D8). It adds a step that snaps the guide mesh onto the source surface. It also leans harder on the planned parity fix: an all-quad region needs an even number of boundary edges, and a hand-made border with an odd count cannot be changed, so the fill around it must absorb the difference or the engine must report it (reading-list entry 29). Moderate extra work, lands in the Module 7 group.</span></label>
+      <label class="option"><input type="radio" name="d1" value="2" data-label="C. Hints only"><strong>C. Hints only</strong><span class="why">Convert the hand-made mesh into existing guidance: its edges become direction strokes and its loops become surface curves. All faces are regenerated.</span><span class="tr"><strong>Trade-off:</strong> almost free, but the artist's exact quads are not kept. That breaks the expectation that hand work is preserved.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option B. It matches how artists already work with TopoGun and RetopoFlow, and the core machinery is already planned. C can still be offered later as a lighter mode.</p>
+      <input type="text" class="card-note" id="note1" placeholder="Your note (optional)" aria-label="Your note for decision 1">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d2-title" data-num="2" data-title="Keeping hand fixes when you run again">
+      <span class="tag">Decision 2 of 4</span>
+      <h3 id="d2-title">Should hand fixes survive a re-run with changed guidance?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>After any automatic run, artists touch up a few spots by hand. Then they want to change guidance somewhere else and run again without losing those fixes.</p>
+        <p><strong>What the plan says now.</strong> The design lists this non-goal:</p>
+        <blockquote class="spec">Editing the output mesh interactively after a run. Users re-run with changed guidance instead.<cite>design.md, Non-Goals</cite></blockquote>
+        <p>So today a re-run replaces the whole result, and hand edits are lost.</p>
+      </div>
+      <label class="option"><input type="radio" name="d2" value="0" data-label="A. Keep the non-goal"><strong>A. Keep the non-goal</strong><span class="why">Re-runs replace everything.</span><span class="tr"><strong>Trade-off:</strong> simplest. Artists learn to fix only at the very end, and any late guidance change costs their fixes.</span></label>
+      <label class="option"><input type="radio" name="d2" value="1" data-label="B. Keep selected faces on re-run" checked><strong>B. "Keep selected faces" on re-run<span class="rec">recommended</span></strong><span class="why">The artist selects the faces of the previous result that they fixed. The addon passes them to the next run as a locked guide mesh (decision 1's mechanism). The non-goal is narrowed to "no interactive editing tools inside Mobius", not "no preserving edits".</span><span class="tr"><strong>Trade-off:</strong> needs decision 1 option B. No new engine work beyond that. An explicit selection is predictable, unlike guessing which faces were edited.</span></label>
+      <label class="option"><input type="radio" name="d2" value="2" data-label="C. Automatic local re-solve"><strong>C. Automatic local re-solve</strong><span class="why">Detect what changed and re-mesh only the affected area, keeping everything else.</span><span class="tr"><strong>Trade-off:</strong> the nicest experience, but hard. A change to the direction field in one place can ripple across the surface, and detecting edits needs stable face identities. A later change, if ever.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option B. Side note, not a decision: TopoGun's Morpher handles a different case, the <em>sculpt</em> changing under a finished low-poly. That is out of scope here.</p>
+      <input type="text" class="card-note" id="note2" placeholder="Your note (optional)" aria-label="Your note for decision 2">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d3-title" data-num="3" data-title="Fused parts in AI-generated meshes">
+      <span class="tag">Decision 3 of 4</span>
+      <h3 id="d3-title">What should Mobius do with parts that are fused into one surface?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>AI-generated meshes (which the proposal names as a target input) often weld separate objects into one connected surface: a sword melted into a hand, a belt fused into a torso. Retopologising across the fusion gives quads that flow straight through the junction. Nitro Retopo's main pitch is splitting these apart.</p>
+        <p><strong>What the plan says now.</strong> mesh-core handles meshes with several disconnected components (each is retopologised independently) and reports problems. Nothing handles parts that are fused into one surface.</p>
+      </div>
+      <label class="option"><input type="radio" name="d3" value="0" data-label="A. Out of scope"><strong>A. Out of scope</strong><span class="why">Artists split meshes beforehand in Blender or another tool.</span><span class="tr"><strong>Trade-off:</strong> no work, but poor results on a common input type with no warning.</span></label>
+      <label class="option"><input type="radio" name="d3" value="1" data-label="B. Documented workflow with existing guidance" checked><strong>B. Documented workflow with existing guidance<span class="rec">recommended for this change</span></strong><span class="why">The artist draws a surface curve around the junction, which forces an edge loop there, and can put each side in its own region with different density.</span><span class="tr"><strong>Trade-off:</strong> the parts stay one connected mesh. That is fine for static assets, but it does not separate objects. Adds a regression case (a fused sword-and-hand) and a short guide, with no new engine features.</span></label>
+      <label class="option"><input type="radio" name="d3" value="2" data-label="C. A mesh-preparation operation"><strong>C. A mesh-preparation operation</strong><span class="why">Cut the source along artist-drawn (or later provider-detected) curves, cap the holes, then retopologise each part separately. It could also hold Nitro-style preparation tools (check, weld, repair, decimate).</span><span class="tr"><strong>Trade-off:</strong> real separation, but robust cutting and hole capping is a substantial piece of work. Best as its own later change on the shared core, like UVs.</span></label>
+      <p class="note"><strong>Recommendation:</strong> B now, and record C as a planned follow-up operation.</p>
+      <input type="text" class="card-note" id="note3" placeholder="Your note (optional)" aria-label="Your note for decision 3">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d4-title" data-num="4" data-title="Reusing marks already made in Blender">
+      <span class="tag">Decision 4 of 4</span>
+      <h3 id="d4-title">Should Mobius use the sharp edges, face sets, materials and seams an artist already set up in Blender?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Most of Quad Remesher's guides come from data that is already on the mesh: material borders, face sets, sharp edges and split normals. Artists who use it have learned to prepare meshes this way, and many sculpts, CAD imports and booleans arrive with sharp edges or face sets already set.</p>
+        <p><strong>What the plan says now.</strong> The addon has its own tools for this:</p>
+        <blockquote class="spec">The addon SHALL let users mark or exclude feature edges, assign faces to named regions with overrides (including deformation zones and "keep existing topology"), and draw surface boundary curves.<cite>blender-addon spec, feature, region and boundary authoring</cite></blockquote>
+        <p>Nothing reads Blender's own sharp edges, face sets, materials or UV seams. The engine does detect sharp edges by angle on its own, like Quad Remesher's "Detect Hard Edges by angle".</p>
+      </div>
+      <label class="option"><input type="radio" name="d4" value="0" data-label="A. Mobius marks only"><strong>A. Mobius marks only</strong><span class="why">Guidance is authored only with the addon's own tools.</span><span class="tr"><strong>Trade-off:</strong> one source of truth and no surprises. Artists must mark again what Blender already shows them.</span></label>
+      <label class="option"><input type="radio" name="d4" value="1" data-label="B. Import on request" checked><strong>B. Import on request<span class="rec">recommended</span></strong><span class="why">An "Import from Blender" action per kind: sharp edges become feature locks; face-set and material borders become surface curves (an edge loop along each border) or regions; UV seams become surface curves. The result is ordinary guidance layers that the artist can see, edit or switch off.</span><span class="tr"><strong>Trade-off:</strong> addon-only work, since the engine layers already exist. The import is a snapshot, so later edits in Blender need a re-import. Imported marks that fight each other are caught by the planned conflict reporting, which is the problem Quad Remesher's manual warns about.</span></label>
+      <label class="option"><input type="radio" name="d4" value="2" data-label="C. Live checkboxes"><strong>C. Live checkboxes</strong><span class="why">Like Quad Remesher: "Use sharp edges", "Use face sets", "Use materials" switches that are read again on every run.</span><span class="tr"><strong>Trade-off:</strong> familiar and always in sync. But the guidance is hidden: Mobius's layers no longer show everything that shaped the result, and changing a material for shading quietly changes the topology.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option B. It gives Quad Remesher users the head start they expect while keeping every input visible and editable in one place.</p>
+      <input type="text" class="card-note" id="note4" placeholder="Your note (optional)" aria-label="Your note for decision 4">
+    </div>
+  </section>
+
+  <section aria-labelledby="s-not">
+    <div class="panel">
+      <span class="eyebrow">Out of this page</span>
+      <h2 id="s-not">Not decided here</h2>
+      <ul class="points">
+        <li>A Nitro and Sketch-Retopo style "patch layout mode", where you choose edge counts or a pattern per patch along surface curves. It could come later on top of surface curves.</li>
+        <li>TopoGun's Morpher (the sculpt changes under a finished low-poly).</li>
+        <li>Map baking. It is already a planned later operation.</li>
+        <li>A Quad-Remesher-style switch between hitting the exact face count and following the shape ("Adapt Quad Count"). It belongs with the face-count tolerance decision in Module 6.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-answers">
+    <div class="prose stack">
+      <span class="eyebrow">Your answers</span>
+      <h2 id="s-answers">Copy and paste into the chat</h2>
+      <p>The box below always shows your current choices and any notes you typed on a card. Add anything else under Notes, then paste the text into the chat.</p>
+    </div>
+    <div class="panel">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btnCopy" type="button">Copy my answers</button>
+        <span class="status" id="copyStatus" aria-live="polite"></span>
+      </div>
+      <textarea id="answers" readonly aria-label="Your answers as text"></textarea>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var ta = document.getElementById('answers');
+  function answers() {
+    var out = 'Artist workflow decisions\n';
+    document.querySelectorAll('.decision').forEach(function (d) {
+      var c = d.querySelector('input[type=radio]:checked');
+      out += 'Decision ' + d.dataset.num + ' (' + d.dataset.title + '): ' + (c ? c.dataset.label : '(no answer)');
+      var n = d.querySelector('.card-note');
+      var text = n ? n.value.trim() : '';
+      if (text) { out += ' (note: ' + text + ')'; }
+      out += '\n';
+    });
+    return out + 'Notes: ';
+  }
+  var refresh = function () { ta.value = answers(); };
+  document.querySelectorAll('.decision input[type=radio]').forEach(function (e) { e.addEventListener('change', refresh); });
+  document.querySelectorAll('.decision .card-note').forEach(function (e) { e.addEventListener('input', refresh); });
+  refresh();
+  document.getElementById('btnCopy').addEventListener('click', function () {
+    refresh();
+    var st = document.getElementById('copyStatus');
+    var fallback = function () { ta.focus(); ta.select(); st.textContent = 'Copying is blocked here. The text is selected, so press Ctrl+C.'; };
+    try {
+      navigator.clipboard.writeText(ta.value).then(function () { st.textContent = 'Copied. Paste it into the chat and add any notes.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>

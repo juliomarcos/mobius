@@ -19,6 +19,7 @@ After each algorithmic group is built, there is a walkthrough of what it produce
 |---|---|---|---|
 | 0 | What good topology is | 3.0 | in progress: [explainer](https://claude.ai/artifact/X2YhDyrNGJWAkYyUx6x9HS) (source: `module-00-good-topology.html`) |
 | – | Coding style (decisions only) | 2.0 | awaiting your answers: [decision page](https://claude.ai/artifact/UWGKBiPGRLmcSvPLHiaSzJ) (source: `coding-style-decisions.html`) |
+| – | Artist workflows: hand-made input, re-runs, fused parts, Blender marks (decisions only) | – | awaiting your answers: [decision page](https://claude.ai/artifact/9BAkFwqxeW13UALt6QMAEe) (source: `artist-workflow-decisions.html`) |
 | 1 | Meshes as data | 3.0 | not started |
 | 2 | Curvature and features | 4.0 | not started |
 | 3 | Measuring quality | 5.0 | not started |
