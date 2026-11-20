@@ -16,7 +16,7 @@ Three constraints shape most of the decisions below:
 - A single default strategy chain that is robust on the whole reference corpus. Peak quality on every input is not required yet.
 - Clear seams for later strategies (global parametrisation, flow-based singularity repair) and for AI analysis providers, without restructuring.
 - Interactive turnaround: field preview in seconds and a full run in under a minute for large sculpts.
-- A future operation (for example UV unwrapping) can be added by registering stages, strategies, objectives and layer kinds, with no edits to shared code, the C API or the addon shell.
+- A future operation (for example UV unwrapping) can be added in a new release by one entry in the operation list (plus its layer kinds in the layer-kind set), with no other edits to shared code, the C API or the addon shell (decision 004).
 
 **Non-Goals:**
 - GPU compute kernels (only the backend layer from D9 is built), compilers other than MSVC, Linux and macOS builds, and multi-plane or radial symmetry. Only one mirror plane is supported in this change.
@@ -29,7 +29,7 @@ Three constraints shape most of the decisions below:
 ```
 sharpmake/        main.sharpmake.cs + one .sharpmake.cs per project
 engine/core/      static library  (namespace mobius)
-  math/ mesh/ analysis/ symmetry/ guidance/ backend/ pipeline/ io/ eval/   shared
+  base/ math/ mesh/ analysis/ symmetry/ guidance/ backend/ pipeline/ io/ eval/   shared (base: strong types, indirect, contract_violation, attribute arrays)
   ops/retopo/     retopology operation (field, meshing, objectives, metrics)
 engine/capi/      shared library  mobius.dll + include/mobius/mobius.h
 engine/cli/       mobius-cli.exe  (links mobius.dll only)
@@ -44,6 +44,9 @@ Sharpmake targets `DevEnv.vs2026`, which produces a `.slnx` solution (pin Sharpm
 ### D2. Third-party dependencies
 - **simdjson 5.2** (Apache-2.0/MIT, used under MIT): JSON parsing for presets, guidance files and test-data bounds. The amalgamated `simdjson.h`/`simdjson.cpp` are vendored and compiled into `MobiusCore`.
 - **doctest** (MIT): unit tests only. It never ships in the engine or the DLL.
+- **jbcoe/value_types** (MIT, header-only): the reference implementation of C++26 `indirect` (P3019). It is vendored and pinned, and Mobius uses only its `indirect`, exposed as `mobius::base::indirect<T>`, until MSVC ships `std::indirect` (decision 004).
+
+Strong types are in-house, modelled on rollbear/strong_type (BSL-1.0). It is a design reference, not a dependency.
 
 Linear algebra is in-house (D16), and so is JSON writing (D12). Each geometry algorithm is implemented in-house from its published paper. *Alternatives:* Eigen. Rejected: its sparse direct solvers cannot move onto the compute backend (D9), and the fixed-size types we need are small enough to own. nlohmann/json. Rejected: it is heavy to compile and slow to parse, and simdjson covers parsing. CGAL, rejected because its GPL components conflict with the commercial-licence policy. libigl, rejected because its MPL core is usable but pulls in a large surface area we don't need; individual routines may be ported with attribution. Instant Meshes and QuadriFlow source, rejected as dependencies because they bring global state, Boost/TBB and non-deterministic parallelism. They are used as algorithmic references only.
 
@@ -70,7 +73,7 @@ Singularity control is a per-edge weight on the connection Laplacian. Raising it
 4. **All-quad mode:** extract at twice the target edge length, then apply one Catmull-Clark-topology split (positions re-projected). This guarantees all quads.
 5. **Post-process:** tangential smoothing constrained to the source surface, then closest-point projection through a BVH. Feature vertices slide only along their curves.
 
-*Alternative:* global seamless parametrisation plus QEx extraction. Rejected as the default: it produces higher-quality layouts, but integer rounding is fragile on noisy scans and it is slower. It is the first planned additional strategy behind the same interface.
+*Alternative:* global seamless parametrisation plus QEx extraction. Rejected as the default: it produces higher-quality layouts, but integer rounding is fragile on noisy scans and it is slower. It is the first planned additional alternative in the meshing-strategy variant.
 
 ### D7. Guidance model and its entry points into the solver
 | Guidance | Enters the solver as |
@@ -103,15 +106,17 @@ Layers are combined by kind: density layers multiply by weight in log space, and
 *Alternatives:* reflecting the mirrored half and then projecting it to the nearest surface, which was the original D8. Rejected: on asymmetric parts the projection lands on the wrong surface, and guidance on the discarded half is lost. A symmetric field over the whole mesh. Rejected: it gives no exact topological symmetry guarantee.
 
 ### D9. Pipeline, determinism and threading
-- **Operations:** an `operation` declares its name, ordered operation-specific stages, parameter schema (name, type, default, range), accepted layer kinds, objectives and named outputs. Operations register in a static registry, and retopology is `ops/retopo`. The pipeline runs the shared stages (validate/repair → analysis → symmetry → guidance resolution), then the operation's stages, then shared evaluation plus the operation's metrics.
-- Each operation-specific stage is an interface (for retopology `field_strategy` and `meshing_strategy`) with strategies registered by name. The pipeline passes an immutable `run_context` (mesh, analysis, symmetry, resolved guidance, objective, parameters), and each stage returns a typed output struct that is exposed under a named output.
+- **Operations:** an `operation` declares its name, ordered operation-specific stages, parameter schema (name, type, default, range), accepted layer kinds, objectives and named outputs. Operations are entries in the operation list, and retopology is `ops/retopo`. The pipeline runs the shared stages (validate/repair → analysis → symmetry → guidance resolution), then the operation's stages, then shared evaluation plus the operation's metrics.
+- **Closed sets:** operations, strategies, layer kinds and compute backends are closed sets (`std::variant` or `enum class`), and a fixed name table maps names to them, so the C API and the addon still select by name. Adding an operation edits the operation list (one entry) and ships in a new release (decision 004).
+- Each operation-specific stage (for retopology the field and meshing stages) is spelled as a variant of strategies or as plain functions, not as an interface with virtual functions. The strategy name table per stage maps names to the variant alternatives. The pipeline passes an immutable `run_context` (mesh, analysis, symmetry, resolved guidance, objective, parameters), and each stage returns a typed output struct that is exposed under a named output.
+- **Logging and warnings:** a singleton logger exists for developer diagnostics only (trace, timings, debug output). It never feeds results or the run report. Warnings the artist must see travel in each stage's output struct, and the pipeline collects them into the run report in stage order.
 - Parallelism uses an in-house `parallel_for` with **fixed chunk boundaries that do not depend on thread count**. Reductions are combined in chunk order, iteration order is never driven by hash maps, and randomness comes from a seeded PCG32 with per-chunk streams. This is what makes the 1-thread and 8-thread results bit-identical.
 - Cancellation and progress use an atomic flag and counters, checked at cooperative checkpoints (every chunk and every solver iteration).
-- **Compute backends:** data-parallel kernels (per-vertex fitting, field smoothing sweeps, position-field sweeps, evaluation sampling and rasterisation) are called through an `compute_backend` interface. Buffers are typed views (`std::mdspan` over backend-owned storage), and each kernel is a named operation with a CPU implementation. The **CPU reference backend** implements every kernel with the deterministic `parallel_for` above, and it is the only backend in this change. Sparse direct solves stay on the CPU in every backend. A future GPU backend (Vulkan compute is the likely choice, for cross-vendor reach; its host code is still compiled by MSVC) adds implementations per kernel, falls back to CPU for any it lacks, and is gated by the backend-equivalence tolerance test. Determinism is therefore promised per backend and device, not across backends: GPU float ordering differs.
+- **Compute backends:** data-parallel kernels (per-vertex fitting, field smoothing sweeps, position-field sweeps, evaluation sampling and rasterisation) are called through a `compute_backend` (a closed set selected by name, as above). Buffers are typed views (`std::mdspan` over backend-owned storage), and each kernel is a named operation with a CPU implementation. The **CPU reference backend** implements every kernel with the deterministic `parallel_for` above, and it is the only backend in this change. Sparse direct solves stay on the CPU in every backend. A future GPU backend (Vulkan compute is the likely choice, for cross-vendor reach; its host code is still compiled by MSVC) adds implementations per kernel, falls back to CPU for any it lacks, and is gated by the backend-equivalence tolerance test. Determinism is therefore promised per backend and device, not across backends: GPU float ordering differs.
 - *Alternative:* TBB. Rejected: its work stealing makes deterministic reductions awkward and adds a runtime DLL.
 
 ### D10. Error handling inside the core
-The core returns `std::expected<T, error>` (C++23) for every anticipated failure (invalid input, unknown strategy, unsatisfiable constraints). Exceptions are reserved for programmer errors and allocation failure. Every C API entry point wraps its body in a catch-all that converts exceptions to status codes plus a thread-local last-error message.
+The core returns `std::expected<T, E>` (C++23) for every anticipated failure (invalid input, unknown strategy, unsatisfiable constraints), where `E` is a per-module error enum (`io_error`, `mesh_error`, …). Each enum is mapped to C API status codes at the boundary. Exceptions are reserved for programmer errors and allocation failure. A failed `MOBIUS_ASSERT` throws `mobius::base::contract_violation`, which the C API catch-all reports as an internal error, and the run is discarded. Every C API entry point wraps its body in a catch-all that converts exceptions to status codes plus a thread-local last-error message.
 
 ### D11. C API shape
 - `mobius.h` exposes `mobius_get_version`, `mobius_check_api(major)`, and handle types `mobius_mesh*`, `mobius_guidance*`, `mobius_settings*`, `mobius_run*` and `mobius_result*`.
@@ -150,7 +155,7 @@ The corpus lives in `tests/corpus/`: procedurally generated meshes (sphere, toru
 ### D15. Compiler and language standard
 - **MSVC only:** Visual Studio 2026 with toolset 14.52 or later, `/std:c++latest /permissive- /W4 /WX /utf-8 /Zc:__cplusplus /Zc:preprocessor`. A Sharpmake-generated check (`_MSC_FULL_VER` static check in a forced-include header, plus a `build.ps1` pre-check) rejects older toolsets with a clear message.
 - **C++23 is the guaranteed baseline.** As of MSVC 14.52, `/std:c++23` is stable and the STL is C++23 feature complete. The core uses `std::expected`, `std::mdspan`, `std::print`/`std::format`, `std::flat_map`, ranges and deducing `this` freely.
-- **C++26 is opportunistic.** MSVC 14.52 implements almost no C++26 core-language features (no reflection, contracts, pack indexing or `#embed`) and few C++26 library features. Any post-C++23 use goes through `engine/core/include/mobius/config/features.h`, which wraps feature-test macros (`__cpp_*`, `__cpp_lib_*`) and provides a C++23 fallback. The **Baseline** configuration (Release with `/std:c++23`) builds and runs the full test suite, so an unguarded use fails the build. As MSVC ships C++26 features, they can be adopted behind the same guards without changing the baseline.
+- **C++26 is opportunistic.** MSVC 14.52 implements almost no C++26 core-language features (no reflection, contracts, pack indexing or `#embed`) and few C++26 library features. Any post-C++23 use goes through `engine/core/include/mobius/config/features.h`, which wraps feature-test macros (`__cpp_*`, `__cpp_lib_*`, including `__cpp_lib_indirect` for `base::indirect`) and provides a C++23 fallback. The **Baseline** configuration (Release with `/std:c++23`) builds and runs the full test suite, so an unguarded use fails the build. As MSVC ships C++26 features, they can be adopted behind the same guards without changing the baseline.
 - **Public header stays C99** (D11), so the language standard never leaks into hosts.
 - **Code organisation and style** follow decision 003 (`docs/coding-style.md`): C++20 named modules in `.ixx` interface units with `.cpp` implementation units, `import std;`, snake_case for types, functions and variables, and strong index types. Macros (feature tests, `MOBIUS_ASSERT`) cannot be exported from modules, so they live in small `.h` headers included from a global module fragment. Third-party headers (simdjson, doctest) are wrapped the same way. Task 1.10 must prove this works with Sharpmake and IntelliSense before group 2. The fallback is ordinary headers.
 - *Alternatives:* clang-cl, which would give pack indexing, `#embed` and similar features today, and GCC 16, which has reflection and contracts. Rejected by project decision: one toolchain keeps the build, debugging and ABI story simple.
@@ -162,13 +167,13 @@ The corpus lives in `tests/corpus/`: procedurally generated meshes (sphere, toru
 - **Sparse matrices:** CSR storage built from triplets with deterministic duplicate summation (sorted by row, column and insertion index). The values live in backend buffers (D9).
 - **Iterative solver:** preconditioned conjugate gradient on top of three backend kernels: SpMV, dot (deterministic fixed-chunk reduction) and axpy. The preconditioner is Jacobi first. A multigrid V-cycle reusing the D6 hierarchy follows if Jacobi misses the performance target (task 11.9 decides). Stopping is on relative residual with an iteration cap. Hitting the cap is reported as a warning naming the stage, and the best iterate is still used.
 - **Determinism:** every reduction uses the fixed-chunk rule from D9, so a solve is bit-identical for any thread count on the CPU backend.
-- *Alternatives:* a hand-written sparse Cholesky (supernodal, with AMD ordering). Rejected for now: it is several times the code with no route to the GPU. It can be added later as a second solver behind the same interface if PCG struggles on hard inputs.
+- *Alternatives:* a hand-written sparse Cholesky (supernodal, with AMD ordering). Rejected for now: it is several times the code with no route to the GPU. It can be added later as a second solver alternative if PCG struggles on hard inputs.
 
 ## Risks / Trade-offs
 
 - [Spatially varying scale in the position field can produce tears or extra singularities where density changes sharply] → Smooth `h_eff` (bounded gradient), test on the density-painting corpus case, and keep a uniform-scale fallback switch.
 - [Stitching "keep existing topology" regions in all-quad mode can create parity conflicts, because an odd boundary vertex count cannot be closed with quads] → Make pinned boundary counts even by splitting one boundary edge of the generated side, and report when that is not possible (quad-dominant fallback for that seam).
-- [Generalising the pipeline, API and addon before the second operation exists can lead to wrong abstractions] → Keep the operation interface minimal (stages, parameter schema, layer kinds, objectives, outputs). Prove it with a test-only dummy operation that registers and runs end to end without touching shared code.
+- [Generalising the pipeline, API and addon before the second operation exists can lead to wrong abstractions] → Keep the operation interface minimal (stages, parameter schema, layer kinds, objectives, outputs). Prove it with a test-only dummy operation that is added by one entry in the operation list and runs end to end without touching any other shared code.
 - [Stitching asymmetric regions into symmetric topology creates extra seams with the same parity problem as preserved regions] → Reuse the D7 stitching and parity fix, and include the partially symmetric sword-arm mesh in the regression corpus.
 - [Fixed-chunk determinism costs some parallel efficiency] → Use chunk sizes tuned for 8–16 cores. The 60 s performance target is measured with this constraint in place.
 - [C++20 modules: IntelliSense support is still labelled experimental in Visual Studio 2026, and Sharpmake has no built-in MSVC module option] → Prove the setup in task 1.10 first, injecting the MSBuild module settings from Sharpmake. Fall back to headers if the build or editor experience is not workable.
@@ -179,7 +184,7 @@ The corpus lives in `tests/corpus/`: procedurally generated meshes (sphere, toru
 - [Blender Python API drift between 4.2 and 5.x (gpu shaders, attribute APIs)] → Add a compatibility module that isolates version branches, and run CI smoke tests headlessly (`blender -b --python`) against 4.2 LTS and the newest installed release.
 - [Sharp density changes or tiny features below `h_min` cannot be represented] → Report under-resolved features in diagnostics instead of silently dropping them.
 - [Hard constraints can make the field infeasible (for example, conflicting feature tangents at a corner)] → Corner vertices are left free of direction constraints, and conflicts are reported with their location.
-- [A greedy default meshing strategy will fall short of hand topology on complex characters] → Accepted for this milestone. The strategy interface and the evaluation suite exist so better strategies can land and be measured.
+- [A greedy default meshing strategy will fall short of hand topology on complex characters] → Accepted for this milestone. The strategy variant and the evaluation suite exist so better strategies can land and be measured.
 
 ## Migration Plan
 

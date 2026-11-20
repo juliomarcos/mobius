@@ -7,7 +7,7 @@ Defines one model for every kind of guidance (direction, density, features, regi
 ## ADDED Requirements
 
 ### Requirement: Operation-specific layer kinds
-Shared layer kinds (direction strokes, density maps, feature locks, regions, surface curves) SHALL be usable by any operation. An operation SHALL be able to register additional layer kinds of its own. A run that includes a layer kind its operation does not accept SHALL fail before processing, with an error naming the layer and listing the accepted kinds.
+Shared layer kinds (direction strokes, density maps, feature locks, regions, surface curves) SHALL be usable by any operation. An operation SHALL be able to add layer kinds of its own to the shared set of layer kinds. A run that includes a layer kind its operation does not accept SHALL fail before processing, with an error naming the layer and listing the accepted kinds.
 
 #### Scenario: Shared curve reused
 - **WHEN** a surface curve layer is supplied to the retopology operation

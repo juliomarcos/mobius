@@ -1,0 +1,1058 @@
+<title>Mobius Coding Style 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #16202c;
+  --muted: #566273;
+  --line: #d3dae3;
+  --face: #e9eef5;
+  --edge: #8794a6;
+  --accent: #2b55c9;
+  --accent-soft: #dfe7fb;
+  --pole3: #0b8a80;
+  --pole5: #c9711d;
+  --pole6: #c0364a;
+  --ghost: #aab4c2;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+    --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+    --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+  --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+  --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { display: grid; gap: 56px; max-width: 1040px; margin: 0 auto; min-width: 0; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 650; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; min-width: 0; }
+.stack { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.13rem; color: var(--ink); max-width: 64ch; }
+.muted { color: var(--muted); }
+a { color: var(--accent); overflow-wrap: anywhere; }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; overflow-wrap: anywhere; }
+header.top { display: grid; gap: 16px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: 500 0.85rem var(--font-body); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.note { font-size: 0.92rem; color: var(--muted); }
+.note strong { color: var(--ink); }
+.callout { border-left: 3px solid var(--pole5); padding-left: 10px; }
+ul.points { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+
+/* Primer cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 14px; }
+.cards .panel { padding: 16px 18px; }
+.cards .panel p { font-size: 0.95rem; }
+.cards .panel .links { font-size: 0.85rem; color: var(--muted); }
+
+/* Decisions */
+.decision { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.decision .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.idea { background: var(--face); border-left: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+.idea .eyebrow { color: var(--accent); }
+.idea p { font-size: 0.95rem; }
+.figure { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
+.figure > div { display: grid; gap: 4px; min-width: 0; align-content: start; }
+.figure .cap { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); }
+.code { min-width: 0; overflow-x: auto; background: var(--face); border: 1px solid var(--line); border-radius: 6px; }
+.idea .code { background: var(--surface); }
+.code pre { margin: 0; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; color: var(--ink); tab-size: 4; }
+.code pre code { font-size: inherit; overflow-wrap: normal; }
+.option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; min-width: 0; }
+.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.option input { margin-top: 5px; accent-color: var(--accent); }
+.option strong { font-weight: 600; }
+.option .why { grid-column: 2; font-size: 0.9rem; color: var(--muted); }
+.option .code { grid-column: 2; }
+.rec { font-size: 0.78rem; font-family: var(--font-mono); color: var(--accent); margin-left: 6px; }
+.card-note { width: 100%; font: 0.9rem var(--font-body); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+textarea { width: 100%; min-height: 360px; font: 0.88rem var(--font-mono); padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.status { font-size: 0.88rem; color: var(--muted); min-height: 1.4em; }
+footer { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 10px; font-size: 0.9rem; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+@media (max-width: 640px) {
+  .figure { grid-template-columns: minmax(0, 1fr); }
+  .decision { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<main>
+  <header class="top">
+    <span class="eyebrow">Mobius · Coding style part 2 · design rules</span>
+    <h1>Mobius coding style, part 2</h1>
+    <p class="lede">Part 1 fixed how the code looks. This page fixes how it is designed: who owns data, how errors and checks work, how loops and functions are shaped and how the code is tested. Every concept is explained first, in plain words, before the question. Every card has a recommendation already selected, so you can change only the ones you disagree with.</p>
+    <div class="meta-row"><span>22 decisions</span><span>9 sections</span><span>~45 minutes</span></div>
+  </header>
+
+  <section aria-labelledby="s-fixed">
+    <div class="panel">
+      <span class="eyebrow">Already decided</span>
+      <h2 id="s-fixed">Fixed choices, not up for a vote</h2>
+      <p class="note">From decision 003 (part 1). All code on this page follows it.</p>
+      <ul class="points">
+        <li><strong>Names.</strong> snake_case for types, functions and variables. <code>m_</code> prefix for private members. PascalCase for constants and enumerators. Modules use the <code>.ixx</code> extension.</li>
+        <li><strong>Format.</strong> clang-format decides, with 120 columns, K&amp;R braces and 4 spaces. West const, for example <code>const vec3d&amp; p</code>.</li>
+        <li><strong>Language use.</strong> <code>auto</code> almost always. Trailing return types on every function, such as <code>auto f(...) -&gt; T</code>. <code>[[nodiscard]]</code> on functions that return values. Strong index types <code>vertex_index</code>, <code>face_index</code> and <code>edge_index</code>. <code>double</code> inside the engine. Errors use <code>std::expected</code> (design D10). <code>struct</code> for plain data and <code>class</code> for invariants.</li>
+        <li><strong>Comments and tests.</strong> <code>///</code> briefs on public declarations. Tests mirror the source paths, one test file per source file.</li>
+        <li><strong>Design facts this page builds on.</strong> D3: the working triangle mesh is stored as structure-of-arrays half-edge data with <code>uint32_t</code> indices. D9: a deterministic <code>parallel_for</code> with fixed chunks, an immutable <code>run_context</code>, and stage interfaces <code>field_strategy</code> and <code>meshing_strategy</code> registered by name. D10: the error model. D11: the C API copies its inputs and owns its worker thread. The engine runs as a DLL inside Blender.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-ideas">
+    <div class="prose stack">
+      <span class="eyebrow">Read this first</span>
+      <h2 id="s-ideas">The ideas behind this page</h2>
+      <p>Most questions come from five ideas. Each card below is short. The first four are the main line of thought, and the fifth is the answer from the other side.</p>
+    </div>
+    <div class="cards">
+      <div class="panel"><h3>Parent's three goals</h3><p>Sean Parent's talk C++ Seasoning gives three goals for better code. First, no raw loops: a loop that does more than one named job should become a standard algorithm or a named function. Second, no raw synchronization primitives: mutexes, atomics, semaphores and memory fences are for library builders, not for everyday code. Third, no raw pointers: a pointer that stands for ownership and shared access is hard to reason about.</p><p class="links"><a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/cpp-seasoning" target="_blank" rel="noopener">S1 Parent, C++ Seasoning</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-11-cpp-seasoning/cpp-seasoning.pdf" target="_blank" rel="noopener">slides</a>)</p></div>
+      <div class="panel"><h3>Value semantics and local reasoning</h3><p>A variable owns its value, and a copy is independent of the original. Then you can understand a function by reading only that function, without knowing the rest of the program. Parent, Abrahams and Lakos each describe this idea from a different side. It is the base of decisions 01, 03 and 10 to 12.</p><p class="links"><a href="https://youtu.be/_BpMYeUFXv8" target="_blank" rel="noopener">S3 Parent, Value Semantics and Concept-based Polymorphism</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-24-value-semantics/value-semantics.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">S9 Parent, Local Reasoning in C++</a> (<a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://classcentral.com/classroom/youtube-value-semantics-safety-independence-projection-future-of-programming-dave-abrahams-cppcon-22-320377" target="_blank" rel="noopener">S11 Abrahams, Value Semantics</a> · <a href="https://accu.org/conf-docs/PDFs_2015/JohnLakos-Value%20Semantics.pdf" target="_blank" rel="noopener">S14 Lakos, Value Semantics</a></p></div>
+      <div class="panel"><h3>Regular types</h3><p>Stepanov and McJones call a type regular when it behaves like the built-in types. You can create one, copy it, assign it and compare it, and the parts fit together with the standard algorithms and containers. Decision 02 applies this to equality.</p><p class="links"><a href="https://elementsofprogramming.com/" target="_blank" rel="noopener">S12 Stepanov and McJones, Elements of Programming</a> · <a href="https://www.stepanovpapers.com/DeSt98.pdf" target="_blank" rel="noopener">S13 Dehnert and Stepanov, Fundamentals of Generic Programming</a></p></div>
+      <div class="panel"><h3>Contracts</h3><p>A contract says what a function needs from its caller (the precondition), what it gives back (the postcondition) and what stays true of an object (the invariant). A narrow contract trusts the caller. A wide contract checks everything and reports errors. C++26 adds contracts to the language, but MSVC does not have them yet.</p><p class="links"><a href="https://youtu.be/OWsepDEh5lQ" target="_blank" rel="noopener">S8 Parent and Abrahams, Better Code: Contracts</a> (<a href="https://sean-parent.stlab.cc/presentations/2023-10-06-better-code-contracts/2023-10-06-better-code-contracts.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://accu.org/video/spring-2011/lakos" target="_blank" rel="noopener">S15 Lakos, Defensive Programming Done Right</a> · <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf" target="_blank" rel="noopener">S24 P2900 Contracts for C++</a></p></div>
+      <div class="panel"><h3>The counterweight: data-oriented design</h3><p>Mike Acton's view is that a program exists to transform data, so you should know your data and the machine it runs on. Abstraction layers have costs, and Mobius processes meshes of 500k vertices, so the costs show. Parent and Acton agree on two points: both dislike deep inheritance hierarchies and both dislike hidden shared state. They pull apart on style. Parent favours named abstractions and algorithms, while Acton favours explicit loops over plain arrays.</p><p class="links"><a href="https://isocpp.org/blog/2015/01/cppcon-2014-data-oriented-design-and-c-mike-acton" target="_blank" rel="noopener">S16 Acton, Data-Oriented Design and C++</a> · <a href="https://www.dataorienteddesign.com/dodbook/" target="_blank" rel="noopener">S17 Fabian, Data-Oriented Design</a> · <a href="https://www.computerenhance.com/p/clean-code-horrible-performance" target="_blank" rel="noopener">S18 Muratori, Clean Code, Horrible Performance</a></p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s1">
+    <div class="prose stack">
+      <span class="eyebrow">1 · Values and types</span>
+      <h2 id="s1">What a value is, and what it costs to copy</h2>
+      <p>These choices decide whether data in Mobius behaves like plain numbers or like shared objects. Everything else on this page builds on them.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d01-title" data-num="01" data-title="Value semantics as the default">
+      <span class="tag">Decision 01 of 22</span>
+      <h3 id="d01-title">Should Mobius types behave like values, or like shared objects?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A value is an object that a variable owns outright. With value semantics, a copy is a separate object, so changing the copy never changes the original. The built-in <code>int</code> works this way. With reference semantics, several names reach one object (pointers, references stored inside objects, <code>std::shared_ptr</code>), so a change through one name shows up through all the others. Then you must know the whole program to know what one line does. Parent and Abrahams argue that values let you understand a function by reading only that function, which is called local reasoning. Mobius needs repeatable results, so this choice sets how safe sharing data between stages will be.</p>
+      </div>
+      <label class="option"><input type="radio" name="d01" value="0" data-label="Value semantics by default" checked><strong>A. Value semantics by default<span class="rec">recommended</span></strong><div class="code"><pre><code>struct field_result {
+    std::vector&lt;double&gt; angles;     // owns its data
+};
+
+[[nodiscard]] auto make_result(const working_mesh&amp; mesh) -&gt; field_result {
+    auto result = field_result{};
+    result.angles.resize(mesh.vertex_count());
+    return result;
+}
+
+auto result = make_result(mesh);
+auto copy = result;                 // a separate object
+copy.angles[0] = 1.0;               // result is unchanged</code></pre></div><span class="why">Every type owns its data and copies are independent. Sharing happens only through non-owning views that live for one call. C API handles are reference-like by nature and stay at the boundary.</span></label>
+      <label class="option"><input type="radio" name="d01" value="1" data-label="Reference semantics for big objects"><strong>B. Reference semantics for big objects</strong><div class="code"><pre><code>struct field_result {
+    std::shared_ptr&lt;std::vector&lt;double&gt;&gt; angles;
+};
+
+auto copy = result;                 // same vector underneath
+copy.angles-&gt;at(0) = 1.0;
+// result.angles-&gt;at(0) is now 1.0 as well</code></pre></div><span class="why">Meshes, fields and results are held by shared pointers and passed around as handles, as in many object-oriented engines. Cheap to pass, but any stage can change what another stage holds.</span></label>
+      <label class="option"><input type="radio" name="d01" value="2" data-label="No rule, decide per type"><strong>C. No rule, decide per type</strong><div class="code"><pre><code>// A value:
+struct settings { double weight = 0.5; };
+
+// A handle:
+using mesh_handle = std::shared_ptr&lt;working_mesh&gt;;
+
+// Each new type is decided again, by whoever writes it.</code></pre></div><span class="why">Least up-front work. The codebase ends up with two habits, and a reader must check each type to know which one applies.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. A stage cannot change data that another stage holds, which keeps runs repeatable and each function readable on its own. Main trade-off: you must think about the cost of copying big data, which decision 03 handles.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://youtu.be/_BpMYeUFXv8" target="_blank" rel="noopener">S3 Parent, Value Semantics and Concept-based Polymorphism</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-24-value-semantics/value-semantics.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://classcentral.com/classroom/youtube-value-semantics-safety-independence-projection-future-of-programming-dave-abrahams-cppcon-22-320377" target="_blank" rel="noopener">S11 Abrahams, Value Semantics</a> · <a href="https://accu.org/conf-docs/PDFs_2015/JohnLakos-Value%20Semantics.pdf" target="_blank" rel="noopener">S14 Lakos, Value Semantics</a> · <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">S9 Parent, Local Reasoning in C++</a> (<a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-regular" target="_blank" rel="noopener">Core Guidelines C.11</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 01">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d02-title" data-num="02" data-title="Regular types and what == means">
+      <span class="tag">Decision 02 of 22</span>
+      <h3 id="d02-title">What should == mean for Mobius value types, and which types are regular?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Stepanov called a type regular when it behaves like <code>int</code>: you can default-construct it, copy it, assign it and compare it with <code>==</code>, and a copy equals the original. C++20 names this as the concept <code>std::regular</code>. For floating-point data there are two separate questions: are these exactly equal, and are these close enough. Close enough is not a true equality, because a close to b and b close to c does not make a close to c, so it should not be spelled <code>==</code>. Mobius promises bit-identical results, so its tests need exact comparisons. Exact <code>==</code> on doubles treats 0.0 and -0.0 as equal and NaN as unequal to itself, so bit-identity tests compare the raw bytes instead.</p>
+      </div>
+      <label class="option"><input type="radio" name="d02" value="0" data-label="Every value type regular, == exact, approx_equal separate" checked><strong>A. Every value type is regular, == is exact<span class="rec">recommended</span></strong><div class="code"><pre><code>struct vec3d {
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+
+    [[nodiscard]] auto operator==(const vec3d&amp;) const -&gt; bool = default;
+};
+
+[[nodiscard]] auto approx_equal(const vec3d&amp; a, const vec3d&amp; b, double tolerance) -&gt; bool;
+
+CHECK(a == b);                      // exact
+CHECK(approx_equal(a, b, 1e-9));    // close enough</code></pre></div><span class="why"><code>==</code> is exact and defaulted. Close-enough comparison is a separate named function.</span></label>
+      <label class="option"><input type="radio" name="d02" value="1" data-label="Regular except equality"><strong>B. Regular except equality</strong><div class="code"><pre><code>struct vec3d {
+    double x;
+    double y;
+    double z;
+};
+
+// No operator== yet: nobody needed it.
+// Later one author adds a version for one test,
+// and it can differ from the next author's version.</code></pre></div><span class="why">Less to write at first. Containers, algorithms and tests that need equality stop working until someone adds it, and each person may choose a different meaning.</span></label>
+      <label class="option"><input type="radio" name="d02" value="2" data-label="== means within a small epsilon"><strong>C. == means within a small epsilon</strong><div class="code"><pre><code>[[nodiscard]] auto operator==(const vec3d&amp; a, const vec3d&amp; b) -&gt; bool {
+    return length(a - b) &lt; 1e-9;
+}
+
+// a == b and b == c can both be true
+// while a == c is false</code></pre></div><span class="why">Convenient in tests. It breaks the rules of equality, hides real differences and cannot check bit-identical results.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. One meaning for <code>==</code> lets containers, algorithms and tests work, and determinism tests can compare directly. Main trade-off: exact <code>==</code> on doubles surprises beginners (0.1 + 0.2 is not 0.3), so tests on computed values must call <code>approx_equal</code> on purpose.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://www.stepanovpapers.com/DeSt98.pdf" target="_blank" rel="noopener">S13 Dehnert and Stepanov, Fundamentals of Generic Programming</a> · <a href="https://elementsofprogramming.com/" target="_blank" rel="noopener">S12 Stepanov and McJones, Elements of Programming</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-regular" target="_blank" rel="noopener">Core Guidelines C.11</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 02">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d03-title" data-num="03" data-title="Heavy objects: may they be copied silently?">
+      <span class="tag">Decision 03 of 22</span>
+      <h3 id="d03-title">How should a very large object such as the working mesh be copied?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A 500k-vertex working mesh is tens of megabytes. With almost-always <code>auto</code> (already decided), <code>auto mesh = context.mesh;</code> silently copies it, while <code>const auto&amp; mesh = context.mesh;</code> does not. Moving an object transfers its contents to a new owner without copying them. A type that copies, assigns and compares like <code>int</code> is fully regular. There are three choices: keep heavy types copyable, make them move-only with an explicit <code>clone()</code> for a deliberate copy, or share one immutable buffer and copy it only on the first write (copy-on-write).</p>
+      </div>
+      <label class="option"><input type="radio" name="d03" value="0" data-label="Heavy types fully regular"><strong>A. Fully regular: heavy types copy like any value</strong><div class="code"><pre><code>auto copy = context.mesh;            // copies 50 MB, compiles silently
+const auto&amp; view = context.mesh;     // no copy
+auto moved = std::move(local_mesh);  // contents transferred
+
+// Review is the only guard against the first line.</code></pre></div><span class="why">Heavy types are passed by <code>const&amp;</code> and returned by value. Simple and uniform, but an accidental copy is found only by a careful reader or a profiler.</span></label>
+      <label class="option"><input type="radio" name="d03" value="1" data-label="Move-only heavy types with clone()" checked><strong>B. Short list of move-only heavy types with clone()<span class="rec">recommended</span></strong><div class="code"><pre><code>class working_mesh {
+public:
+    working_mesh(const working_mesh&amp;) = delete;
+    working_mesh(working_mesh&amp;&amp;) noexcept = default;
+
+    [[nodiscard]] auto clone() const -&gt; working_mesh;
+};
+
+auto copy = context.mesh;            // compile error
+auto deliberate = context.mesh.clone();</code></pre></div><span class="why">Only a named list (working_mesh, sparse matrices, fields, run results) is move-only. Everything else stays regular.</span></label>
+      <label class="option"><input type="radio" name="d03" value="2" data-label="Copy-on-write"><strong>C. Copy-on-write</strong><div class="code"><pre><code>template &lt;typename T&gt;
+class copy_on_write {
+public:
+    [[nodiscard]] auto read() const -&gt; const T&amp;;   // no copy
+    [[nodiscard]] auto write() -&gt; T&amp;;              // copies if shared
+
+private:
+    std::shared_ptr&lt;const T&gt; m_data;
+};</code></pre></div><span class="why">Heavy types stay fully regular and copies are cheap until someone writes, as in the stlab copy_on_write type. The cost is a hidden reference count and an extra step on every access.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option B. Under almost-always <code>auto</code> an accidental 50 MB copy compiles without a sound. With B it is a compile error and the fix, <code>clone()</code>, is visible. Main trade-off: those few types are not <code>std::regular</code>, so they cannot go into containers that require copying (equality can still be defined). C keeps full regularity but hides a reference count.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://www.youtube.com/watch?v=sWgDk-o-6ZE" target="_blank" rel="noopener">S4 Parent, Better Code: Data Structures</a> · <a href="https://youtu.be/_BpMYeUFXv8" target="_blank" rel="noopener">S3 Parent, Value Semantics and Concept-based Polymorphism</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-24-value-semantics/value-semantics.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://accu.org/conf-docs/PDFs_2015/JohnLakos-Value%20Semantics.pdf" target="_blank" rel="noopener">S14 Lakos, Value Semantics</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in" target="_blank" rel="noopener">Core Guidelines F.16</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 03">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d04-title" data-num="04" data-title="Immutability by default">
+      <span class="tag">Decision 04 of 22</span>
+      <h3 id="d04-title">How strictly should Mobius use const?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>An object that never changes after it is made is easy to reason about. <code>const</code> on a local variable says that this name will not change for the rest of the function. A function that only reads its input takes it by value or as a <code>const&amp;</code>, which is a read-only reference. A <code>const</code> member function promises not to change the object.</p>
+      </div>
+      <label class="option"><input type="radio" name="d04" value="0" data-label="const on everything that does not change" checked><strong>A. const on everything that does not change<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto triangle_quality(const vec3d&amp; a, const vec3d&amp; b, const vec3d&amp; c) -&gt; double {
+    const auto area = 0.5 * length(cross(b - a, c - a));
+    const auto edge_sum = squared_length(b - a) + squared_length(c - b) + squared_length(a - c);
+    auto quality = 0.0;
+    if (edge_sum &gt; 0.0) {
+        quality = 4.0 * std::sqrt(3.0) * area / edge_sum;
+    }
+    return quality;     // returned local: not const, so it can move out
+}</code></pre></div><span class="why"><code>const</code> on unchanged locals, <code>const&amp;</code> for read-only parameters, <code>const</code> on all query member functions. A local that is returned is not <code>const</code>, because that blocks the move on return.</span></label>
+      <label class="option"><input type="radio" name="d04" value="1" data-label="const on parameters and members only"><strong>B. const on parameters and members only</strong><div class="code"><pre><code>[[nodiscard]] auto triangle_quality(const vec3d&amp; a, const vec3d&amp; b, const vec3d&amp; c) -&gt; double {
+    auto area = 0.5 * length(cross(b - a, c - a));
+    auto edge_sum = squared_length(b - a) + squared_length(c - b) + squared_length(a - c);
+    // area and edge_sum never change, but nothing says so
+    return edge_sum &gt; 0.0 ? 4.0 * std::sqrt(3.0) * area / edge_sum : 0.0;
+}</code></pre></div><span class="why">Fewer words per line. A reader must scan the whole function to learn which locals change.</span></label>
+      <label class="option"><input type="radio" name="d04" value="2" data-label="No rule"><strong>C. No rule</strong><div class="code"><pre><code>// Some authors write const on locals, some do not.
+auto area = compute_area(mesh, f);
+// Does area change below? Read on to find out.</code></pre></div><span class="why">Nothing to remember. The compiler cannot help, and the codebase mixes two habits.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. A reader sees at once which names change, and the compiler enforces it. Main trade-off: more <code>const</code> words, and the return-value exception must be remembered.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rconst-immutable" target="_blank" rel="noopener">Core Guidelines Con.1</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rconst-const" target="_blank" rel="noopener">Core Guidelines Con.4</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 04">
+    </div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <div class="prose stack">
+      <span class="eyebrow">2 · Polymorphism and generic code</span>
+      <h2 id="s2">Choosing behaviour at run time and writing code for many types</h2>
+      <p>Two ways to avoid writing the same code twice, each with a price. The page explains both before it asks.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d05-title" data-num="05" data-title="Runtime polymorphism">
+      <span class="tag">Decision 05 of 22</span>
+      <h3 id="d05-title">How should Mobius pick behaviour at run time, for example a strategy chosen by name?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Runtime polymorphism means choosing behaviour while the program runs, for example picking the field strategy by its registered name (design D9). A virtual base class uses inheritance: callers hold a pointer to the base. Type erasure, Parent's concept-based polymorphism, is a value type that can hold any type with the right functions, as <code>std::function</code> does for callables, with the virtual calls hidden inside. <code>std::variant</code> holds one of a closed list of types that is known when compiling, and <code>std::visit</code> handles each case. Templates choose at compile time. Parent argues that inheritance forces reference semantics, meaning heap objects behind pointers, on every user of a type. Muratori shows that a virtual call per element, or many tiny polymorphic objects, costs real speed. This decision sets how the stage interfaces of D9 are spelled.</p>
+      </div>
+      <label class="option"><input type="radio" name="d05" value="0" data-label="Variant for closed sets, type-erased values for open sets" checked><strong>A. Mixed: variant for closed sets, type-erased values for open sets<span class="rec">recommended</span></strong><div class="code"><pre><code>using layer = std::variant&lt;stroke_layer, density_layer, feature_layer&gt;;   // closed set
+
+auto apply(const layer&amp; l, field&amp; f) -&gt; void {
+    std::visit([&amp;](const auto&amp; x) { x.apply_to(f); }, l);
+}
+
+class meshing_strategy {                // open set: a type-erased value
+public:
+    template &lt;typename T&gt;
+    explicit meshing_strategy(T impl);  // wraps any type that has run()
+    [[nodiscard]] auto run(const working_mesh&amp; mesh) const -&gt; quad_mesh;
+
+private:
+    std::shared_ptr&lt;const concept_base&gt; m_impl;     // hidden detail
+};</code></pre></div><span class="why">No public inheritance hierarchies. Inheritance may appear only as a hidden detail inside a type-erased wrapper. Dispatch happens once per stage or per batch, never per element in a hot loop.</span></label>
+      <label class="option"><input type="radio" name="d05" value="1" data-label="Virtual interfaces for open sets, variant for closed sets"><strong>B. Abstract interfaces for open sets</strong><div class="code"><pre><code>class meshing_strategy {
+public:
+    virtual ~meshing_strategy() = default;
+    [[nodiscard]] virtual auto run(const working_mesh&amp; mesh) const -&gt; quad_mesh = 0;
+};
+
+[[nodiscard]] auto find_strategy(std::string_view name) -&gt; std::unique_ptr&lt;meshing_strategy&gt;;
+
+// The caller now holds a pointer. Copying a strategy needs a clone().</code></pre></div><span class="why">Virtual functions held by <code>std::unique_ptr</code> for open sets, <code>std::variant</code> for closed sets, same never-per-element rule. Simpler to write and to read than a type-erased wrapper, which counts for a learner.</span></label>
+      <label class="option"><input type="radio" name="d05" value="2" data-label="Virtual interfaces everywhere"><strong>C. Classic object-oriented everywhere</strong><div class="code"><pre><code>class guidance_layer {              // even a closed set gets a base class
+public:
+    virtual ~guidance_layer() = default;
+    virtual auto apply_to(field&amp; f) const -&gt; void = 0;
+};
+
+std::vector&lt;std::unique_ptr&lt;guidance_layer&gt;&gt; layers;   // pointers everywhere</code></pre></div><span class="why">Familiar from many books. Every closed set loses compiler-checked exhaustive handling, and every collection holds pointers.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Strategies stay values (copyable settings, comparable, no pointer handling at the call site), and closed sets get compiler-checked exhaustive handling. Main trade-off: a type-erased wrapper is about 30 lines of boilerplate per interface and is less familiar than a base class. B is simpler to write and read.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/inheritance-base-class-of-evil" target="_blank" rel="noopener">S2 Parent, Inheritance Is The Base Class of Evil</a> · <a href="https://youtu.be/_BpMYeUFXv8" target="_blank" rel="noopener">S3 Parent, Value Semantics and Concept-based Polymorphism</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-24-value-semantics/value-semantics.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://www.youtube.com/watch?v=QGcVXgEVMJg" target="_blank" rel="noopener">S6 Parent, Better Code: Runtime Polymorphism</a> · <a href="https://www.computerenhance.com/p/clean-code-horrible-performance" target="_blank" rel="noopener">S18 Muratori, Clean Code, Horrible Performance</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain" target="_blank" rel="noopener">Core Guidelines C.120</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-copy-virtual" target="_blank" rel="noopener">Core Guidelines C.67</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 05">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d06-title" data-num="06" data-title="Templates and concepts">
+      <span class="tag">Decision 06 of 22</span>
+      <h3 id="d06-title">When may code be written as a template?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Generic programming, Stepanov's idea, writes an algorithm once for every type that meets stated requirements. A template is the C++ tool for this. A concept names the requirements, so a wrong type gives a short error message instead of a long one. The costs are longer compile times, harder error messages and code that is harder for a newcomer to read.</p>
+      </div>
+      <label class="option"><input type="radio" name="d06" value="0" data-label="Concrete by default, templates only with two real users" checked><strong>A. Concrete by default, constrained templates where needed<span class="rec">recommended</span></strong><div class="code"><pre><code>// Concrete by default.
+[[nodiscard]] auto face_area(const working_mesh&amp; mesh, face_index f) -&gt; double;
+
+// A template only where several real types exist now,
+// and every parameter is constrained by a named concept.
+template &lt;typename T&gt;
+concept index_like = requires(T i) { i.value; };
+
+template &lt;index_like I&gt;
+[[nodiscard]] auto to_size(I i) -&gt; std::size_t { return i.value; }</code></pre></div><span class="why">Templates only where two or more real types exist now, such as <code>vec&lt;T,N&gt;</code>, <code>index&lt;Tag&gt;</code> and attribute arrays.</span></label>
+      <label class="option"><input type="radio" name="d06" value="1" data-label="Generic from the start"><strong>B. Generic from the start</strong><div class="code"><pre><code>template &lt;typename M&gt;
+concept mesh_like = requires(const M&amp; m, typename M::vertex_type v) {
+    { m.vertex_count() } -&gt; std::convertible_to&lt;std::size_t&gt;;
+};
+
+template &lt;mesh_like Mesh&gt;
+[[nodiscard]] auto principal_curvatures(const Mesh&amp; mesh, typename Mesh::vertex_type v)
+    -&gt; curvature_result;</code></pre></div><span class="why">Algorithms are written against concepts, for example any mesh-like type. Flexible, but Mobius has one mesh type, so the cost has no second user yet.</span></label>
+      <label class="option"><input type="radio" name="d06" value="2" data-label="No templates outside the maths module"><strong>C. No templates outside the maths module</strong><div class="code"><pre><code>// math module: templates allowed
+template &lt;typename T, int N&gt;
+struct vec { T data[N]; };
+
+// everywhere else: concrete types only
+auto smooth_field(working_mesh&amp; mesh) -&gt; void;</code></pre></div><span class="why">A very simple rule. It also blocks harmless uses such as the index and attribute templates.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Mobius has one mesh type, so generic algorithms would add cost without a second user, and concepts keep the few templates readable. Main trade-off: if a second mesh type appears later, some algorithms must be made generic then.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://elementsofprogramming.com/" target="_blank" rel="noopener">S12 Stepanov and McJones, Elements of Programming</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-concepts" target="_blank" rel="noopener">Core Guidelines T.10</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 06">
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <div class="prose stack">
+      <span class="eyebrow">3 · Algorithms, functions and interfaces</span>
+      <h2 id="s3">How loops, functions and their arguments look</h2>
+      <p>These choices shape almost every function you will read in the engine.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d07-title" data-num="07" data-title="Raw loops">
+      <span class="tag">Decision 07 of 22</span>
+      <h3 id="d07-title">When may a plain loop appear in the code?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Parent's rule paraphrased: a raw loop is a loop inside a function whose purpose is larger than the algorithm the loop implements. The cure is a standard algorithm (<code>std::ranges::transform</code>, <code>std::ranges::count_if</code> and others), or moving the loop into its own well-named function. The counterweight is that a plain loop over an array is clear, easy to debug and easy to make fast. Range views, which are lazy pipelines joined with <code>|</code>, add layers that are not inlined in Debug builds, so Debug runs can be slower.</p>
+        <div class="figure">
+          <div><span class="cap">Before: one loop doing four jobs</span><div class="code"><pre><code>auto process(const working_mesh&amp; mesh) -&gt; double {
+    auto areas = std::vector&lt;double&gt;{};
+    auto total = 0.0;
+    for (auto i = std::uint32_t{0}; i &lt; mesh.face_count(); ++i) {
+        const auto a = face_area(mesh, face_index{i});
+        areas.push_back(a);
+        total += a;
+        if (a &lt; 1e-12) {
+            log_degenerate(i);
+        }
+    }
+    return total;
+}</code></pre></div></div>
+          <div><span class="cap">After: each step has a name</span><div class="code"><pre><code>[[nodiscard]] auto face_areas(const working_mesh&amp; mesh) -&gt; std::vector&lt;double&gt; {
+    auto areas = std::vector&lt;double&gt;(mesh.face_count());
+    std::ranges::transform(mesh.faces(), areas.begin(),
+                           [&amp;](face_index f) { return face_area(mesh, f); });
+    return areas;
+}
+
+[[nodiscard]] auto total_area(std::span&lt;const double&gt; areas) -&gt; double {
+    return std::ranges::fold_left(areas, 0.0, std::plus{});
+}
+
+// The caller composes the named steps:
+const auto areas = face_areas(mesh);
+report_degenerate_faces(areas);
+const auto total = total_area(areas);</code></pre></div></div>
+        </div>
+      </div>
+      <label class="option"><input type="radio" name="d07" value="0" data-label="Parent's rule: named algorithms or named loop functions" checked><strong>A. Parent's rule as stated<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto count_boundary_vertices(const working_mesh&amp; mesh) -&gt; std::size_t {
+    const auto count = std::ranges::count_if(
+        mesh.vertices(), [&amp;](vertex_index v) { return is_boundary(mesh, v); });
+    return static_cast&lt;std::size_t&gt;(count);
+}
+
+// A numerical sweep stays a loop, inside its own named function:
+auto gauss_seidel_sweep(const sparse_matrix&amp; a, std::span&lt;double&gt; x) -&gt; void {
+    for (auto i = std::size_t{0}; i &lt; x.size(); ++i) {
+        x[i] = relax_row(a, x, i);
+    }
+}</code></pre></div><span class="why">A loop is fine when it is the whole body of a small named function. Otherwise use a <code>std::ranges</code> algorithm or extract the loop. Range-<code>for</code> is fine for a simple do-this-for-each. Long <code>views</code> pipelines are avoided in hot code.</span></label>
+      <label class="option"><input type="radio" name="d07" value="1" data-label="Ranges and views pipelines everywhere"><strong>B. Ranges and views pipelines everywhere</strong><div class="code"><pre><code>auto total = std::ranges::fold_left(
+    mesh.faces()
+        | std::views::filter([&amp;](face_index f) { return !is_degenerate(mesh, f); })
+        | std::views::transform([&amp;](face_index f) { return face_area(mesh, f); }),
+    0.0, std::plus{});</code></pre></div><span class="why">Compact and declarative. Harder to debug, slower in Debug builds, and long pipelines are hard to read for a newcomer.</span></label>
+      <label class="option"><input type="radio" name="d07" value="2" data-label="Plain loops anywhere"><strong>C. Plain loops anywhere, no rule</strong><div class="code"><pre><code>for (auto i = std::uint32_t{0}; i &lt; mesh.face_count(); ++i) {
+    // area, quality, logging and bookkeeping
+    // all mixed into one loop
+}</code></pre></div><span class="why">Fast to write and easy to debug. Loops grow, and nothing names what each one does.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Every loop gets a name that says what it does, and well-known algorithms are not rewritten by hand. Main trade-off: more small functions. Numerical sweeps such as a Gauss-Seidel pass stay loops but live in their own named function.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/cpp-seasoning" target="_blank" rel="noopener">S1 Parent, C++ Seasoning</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-11-cpp-seasoning/cpp-seasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-lib" target="_blank" rel="noopener">Core Guidelines ES.1</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-dry" target="_blank" rel="noopener">Core Guidelines ES.3</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-for-range" target="_blank" rel="noopener">Core Guidelines ES.71</a> · <a href="https://isocpp.org/blog/2015/01/cppcon-2014-data-oriented-design-and-c-mike-acton" target="_blank" rel="noopener">S16 Acton, Data-Oriented Design and C++</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 07">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d08-title" data-num="08" data-title="Member functions or free functions">
+      <span class="tag">Decision 08 of 22</span>
+      <h3 id="d08-title">Should algorithms be member functions of the mesh, or free functions?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A member function can see a class's private data, so every member is one more place that can break the class's invariant. An invariant is a fact that must always be true of an object. Core Guideline C.4 and Meyers say: make a function a member only if it needs the private representation, and make everything else a free function. The standard library works this way: <code>std::ranges::sort(v)</code>, not <code>v.sort()</code>.</p>
+      </div>
+      <label class="option"><input type="radio" name="d08" value="0" data-label="Minimal classes, algorithms as free functions" checked><strong>A. Minimal classes, algorithms as free functions<span class="rec">recommended</span></strong><div class="code"><pre><code>namespace mobius::analysis {
+
+/// Requires: v is a valid vertex of mesh.
+[[nodiscard]] auto principal_curvatures(const working_mesh&amp; mesh, vertex_index v) -&gt; curvature_result;
+
+}  // namespace mobius::analysis
+
+auto k = analysis::principal_curvatures(mesh, v);</code></pre></div><span class="why">Members only for accessors and invariant-preserving edits. Curvature, smoothing and metrics are free functions in their module namespace, taking the mesh by <code>const&amp;</code>.</span></label>
+      <label class="option"><input type="radio" name="d08" value="1" data-label="Rich classes, everything as members"><strong>B. Rich classes: everything as members</strong><div class="code"><pre><code>class working_mesh {
+public:
+    [[nodiscard]] auto compute_curvature(vertex_index v) const -&gt; curvature_result;
+    auto smooth(int iterations) -&gt; void;
+    auto remesh(double target_edge_length) -&gt; void;
+    // ... grows with every new algorithm
+};</code></pre></div><span class="why">Dot-completion in the editor lists every operation. The class grows without limit, and every new algorithm can touch private data.</span></label>
+      <label class="option"><input type="radio" name="d08" value="2" data-label="Free functions on open structs, no private data"><strong>C. Only free functions on open structs</strong><div class="code"><pre><code>struct mesh_data {
+    std::vector&lt;vec3d&gt; positions;       // all public
+    std::vector&lt;halfedge_index&gt; next;
+};
+
+auto flip_edge(mesh_data&amp; mesh, edge_index e) -&gt; void;   // anyone can break the links</code></pre></div><span class="why">C and data-oriented style. Simple, but no code protects the invariants.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. The mesh class stays small, so its invariants have few places to break, and algorithms live in the module they belong to. Main trade-off: dot-completion in the editor shows less. Typing <code>mobius::analysis::</code> shows the algorithms instead.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-member" target="_blank" rel="noopener">Core Guidelines C.4</a> · <a href="https://drdobbs.com/cpp/how-non-member-functions-improve-encapsu/184401197" target="_blank" rel="noopener">S19 Meyers, How Non-Member Functions Improve Encapsulation</a> · <a href="https://elementsofprogramming.com/" target="_blank" rel="noopener">S12 Stepanov and McJones, Elements of Programming</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 08">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d09-title" data-num="09" data-title="Parameters and results">
+      <span class="tag">Decision 09 of 22</span>
+      <h3 id="d09-title">How should functions take input and give output?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>This decision covers how a function receives its inputs and hands back its results. The Core Guidelines say: pass cheap types by value and others by <code>const&amp;</code>, return results instead of writing through output parameters, return a struct when there are several results, and keep the parameter count low. C++20 designated initializers let a call name its settings, for example <code>smooth_field(mesh, angles, {.iterations = 20, .weight = 0.5})</code>. A <code>std::span</code> is a view of a run of elements that someone else owns.</p>
+      </div>
+      <label class="option"><input type="radio" name="d09" value="0" data-label="Values in and out, settings structs, *_into only for hot buffers" checked><strong>A. Values in, values out, settings structs<span class="rec">recommended</span></strong><div class="code"><pre><code>struct smooth_settings {
+    int iterations = 10;
+    double weight = 0.5;
+};
+
+[[nodiscard]] auto smooth_field(const working_mesh&amp; mesh, std::span&lt;const double&gt; angles,
+                                const smooth_settings&amp; settings) -&gt; std::vector&lt;double&gt;;
+
+auto smoothed = smooth_field(mesh, angles, {.iterations = 20, .weight = 0.5});</code></pre></div><span class="why">Cheap types (indices, <code>vec3d</code>, <code>double</code>) by value, others by <code>const&amp;</code>, bulk arrays as <code>std::span&lt;const T&gt;</code>. More than about four settings go in a <code>*_settings</code> struct. Output parameters only to reuse a caller's buffer in hot code, in functions named <code>*_into</code>.</span></label>
+      <label class="option"><input type="radio" name="d09" value="1" data-label="Output parameters everywhere"><strong>B. Output parameters everywhere</strong><div class="code"><pre><code>auto smooth_field(const working_mesh&amp; mesh, const std::vector&lt;double&gt;&amp; angles,
+                  int iterations, double weight, std::vector&lt;double&gt;&amp; out) -&gt; void;
+
+auto smoothed = std::vector&lt;double&gt;{};
+smooth_field(mesh, angles, 20, 0.5, smoothed);   // the result hides in the arguments</code></pre></div><span class="why">Matches the C API style. A call does not show which argument is the result, and long positional lists are easy to mix up.</span></label>
+      <label class="option"><input type="radio" name="d09" value="2" data-label="Builder objects with chained setters"><strong>C. Builder objects with chained setters</strong><div class="code"><pre><code>auto smoothed = smoother{}
+                    .iterations(20)
+                    .weight(0.5)
+                    .run(mesh, angles);
+
+// needs a builder class and one setter per option</code></pre></div><span class="why">Reads well at the call site. Every algorithm needs an extra class, and a builder is a mutable object with state.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. A call reads like a sentence and every result is visible at the call site. Main trade-off: designated initializers must follow declaration order or the code does not compile, and returning large values relies on moves, which are cheap.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in" target="_blank" rel="noopener">Core Guidelines F.16</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out" target="_blank" rel="noopener">Core Guidelines F.20</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out-multi" target="_blank" rel="noopener">Core Guidelines F.21</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-nargs" target="_blank" rel="noopener">Core Guidelines I.23</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 09">
+    </div>
+  </section>
+
+  <section aria-labelledby="s4">
+    <div class="prose stack">
+      <span class="eyebrow">4 · Ownership, lifetimes and state</span>
+      <h2 id="s4">Who owns data, how long it lives and what is hidden</h2>
+      <p>Many of the hardest C++ bugs come from unclear ownership. These rules make ownership visible in the code.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d10-title" data-num="10" data-title="Ownership">
+      <span class="tag">Decision 10 of 22</span>
+      <h3 id="d10-title">Who owns an object, and how is that written in the type?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>The owner of an object is the one that destroys it. A raw owning pointer, such as <code>T* p = new T</code>, leaves it to human memory to free the object. That is what Parent's no raw pointers goal is about. <code>std::unique_ptr</code> is a single owner. <code>std::shared_ptr</code> has several owners. Parent's slide on shared pointers says: "A shared pointer is as good as a global variable" (S1). The reason is that anyone holding it can change the object.</p>
+      </div>
+      <label class="option"><input type="radio" name="d10" value="0" data-label="Owners are values, unique_ptr when needed, no mutable shared_ptr" checked><strong>A. Owners are values; unique_ptr when needed<span class="rec">recommended</span></strong><div class="code"><pre><code>class working_mesh {
+    std::vector&lt;vec3d&gt; m_positions;     // the owner is a value
+};
+
+[[nodiscard]] auto make_solver() -&gt; std::unique_ptr&lt;solver&gt;;             // one owner
+[[nodiscard]] auto freeze_source(source_mesh mesh) -&gt; std::shared_ptr&lt;const source_mesh&gt;; // shared, immutable
+
+// T* and T&amp; never own: a read-only borrow looks like this.
+[[nodiscard]] auto edge_length(const working_mesh&amp; mesh, edge_index e) -&gt; double;</code></pre></div><span class="why"><code>std::shared_ptr&lt;const T&gt;</code> only for large immutable data that really must be shared across threads or C API handles. Never <code>shared_ptr</code> to mutable data. No <code>new</code> or <code>delete</code> outside low-level containers.</span></label>
+      <label class="option"><input type="radio" name="d10" value="1" data-label="shared_ptr freely"><strong>B. shared_ptr freely</strong><div class="code"><pre><code>auto mesh = std::make_shared&lt;working_mesh&gt;();
+auto other = mesh;                  // two owners of one mutable mesh
+other-&gt;flip_edge(edge_index{3});    // mesh has changed too</code></pre></div><span class="why">Convenient: nobody has to decide who owns what. Mutable state is shared silently, and the owner is no longer clear.</span></label>
+      <label class="option"><input type="radio" name="d10" value="2" data-label="Raw owning pointers allowed in internals"><strong>C. Raw owning pointers in internals</strong><div class="code"><pre><code>auto* solver = new cross_field_solver{};
+run(solver);
+delete solver;      // skipped on an early return or an exception</code></pre></div><span class="why">Closest to C and fast. Every path must remember the delete, which is how leaks and double frees happen.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Ownership is visible in the type, and there is no shared mutable state. Main trade-off: you must decide who owns what up front, and run results must own their outputs by moving them in.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/cpp-seasoning" target="_blank" rel="noopener">S1 Parent, C++ Seasoning</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-11-cpp-seasoning/cpp-seasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr" target="_blank" rel="noopener">Core Guidelines R.3</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-owner" target="_blank" rel="noopener">Core Guidelines R.20</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-unique" target="_blank" rel="noopener">Core Guidelines R.21</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-raw" target="_blank" rel="noopener">Core Guidelines I.11</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-raii" target="_blank" rel="noopener">Core Guidelines R.1</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 10">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d11-title" data-num="11" data-title="Views and lifetimes">
+      <span class="tag">Decision 11 of 22</span>
+      <h3 id="d11-title">Where may a view (a span, a string_view, a reference) be stored?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A view such as <code>std::span</code>, <code>std::string_view</code> or a reference points into data that someone else owns. If the owner is destroyed, or a <code>std::vector</code> grows and moves its storage, the view dangles. Using a dangling view is undefined behaviour, which means the program may do anything. It is the worst kind of bug because it can seem to work for a while. Indices survive reallocation, which is one reason D3 uses strong indices.</p>
+      </div>
+      <label class="option"><input type="radio" name="d11" value="0" data-label="Views are parameters only, *_view types for exceptions" checked><strong>A. Views are parameters only, named exceptions<span class="rec">recommended</span></strong><div class="code"><pre><code>// Allowed: a view as a parameter, alive only for the call.
+[[nodiscard]] auto mean(std::span&lt;const double&gt; values) -&gt; double;
+
+// Allowed: a named view type whose brief says what it must not outlive.
+/// Must not outlive the buffer it was made from.
+struct buffer_view {
+    std::span&lt;const float&gt; data;
+};
+
+// Objects refer to mesh elements by index, never by pointer.
+struct crease { edge_index edge; };</code></pre></div><span class="why">A view is never stored in a member or returned, except in a type whose name ends in <code>_view</code>. D9's backend buffers are such a case.</span></label>
+      <label class="option"><input type="radio" name="d11" value="1" data-label="Views may be stored anywhere"><strong>B. Views may be stored anywhere, with a comment</strong><div class="code"><pre><code>struct solver_state {
+    std::span&lt;const vec3d&gt; positions;   // points into a vector owned elsewhere
+};
+
+// If that vector grows, positions dangles.
+// A comment is the only protection.</code></pre></div><span class="why">Fewer copies and less code. Dangling views cannot be found by searching, only by crashes.</span></label>
+      <label class="option"><input type="radio" name="d11" value="2" data-label="No views, pass containers by const&amp;"><strong>C. No views, pass containers by const&amp;</strong><div class="code"><pre><code>[[nodiscard]] auto mean(const std::vector&lt;double&gt;&amp; values) -&gt; double;
+
+// Cannot be called with a plain array or with part of a
+// vector without making a copy first.</code></pre></div><span class="why">Cannot dangle on its own. Forces copies, or forces every caller to hold a <code>std::vector</code>.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Every dangling-view risk is named and searchable. Main trade-off: some convenience structs need an index plus the mesh passed separately.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">S9 Parent, Local Reasoning in C++</a> (<a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://classcentral.com/classroom/youtube-value-semantics-safety-independence-projection-future-of-programming-dave-abrahams-cppcon-22-320377" target="_blank" rel="noopener">S11 Abrahams, Value Semantics</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr" target="_blank" rel="noopener">Core Guidelines R.3</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 11">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d12-title" data-num="12" data-title="Global and hidden state">
+      <span class="tag">Decision 12 of 22</span>
+      <h3 id="d12-title">May code use global or static variables that can change?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A global or static variable that can change is a hidden input to every function that reads it. It breaks local reasoning, because the function signature no longer shows everything the function depends on. It also breaks determinism, which means getting the same result on every run. A global random generator, or a global log written from several threads, gives different results from run to run.</p>
+      </div>
+      <label class="option"><input type="radio" name="d12" value="0" data-label="No mutable globals, three listed exceptions" checked><strong>A. No mutable globals or singletons, three listed exceptions<span class="rec">recommended</span></strong><div class="code"><pre><code>struct run_context {
+    std::uint64_t seed = 1;
+    int thread_count = 1;
+};
+
+[[nodiscard]] auto random_jitter(const run_context&amp; context, std::size_t count)
+    -&gt; std::vector&lt;double&gt;;
+
+// Listed exceptions, and no others:
+//   the operation registry (filled once at startup, then read-only),
+//   the C API's thread-local last-error message (D10),
+//   compile-time constants.</code></pre></div><span class="why">Random number generators, settings and diagnostics reach code explicitly through parameters or the immutable <code>run_context</code>.</span></label>
+      <label class="option"><input type="radio" name="d12" value="1" data-label="Singletons allowed for services"><strong>B. Singletons allowed for services</strong><div class="code"><pre><code>auto&amp; log = logger::instance();         // a global, mutable singleton
+log.write("solver stopped early");      // order depends on thread timing</code></pre></div><span class="why">Handy for a logger, a profiler or an allocator. Every function that touches one gains a hidden input, and output order can change between runs.</span></label>
+      <label class="option"><input type="radio" name="d12" value="2" data-label="No rule"><strong>C. No rule</strong><div class="code"><pre><code>static std::mt19937 generator;      // hidden input to every caller
+// Two runs can give different results.</code></pre></div><span class="why">Fastest to write. Breaks the determinism promise as soon as two threads use the same global.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Every input of a function is visible in its signature, which the determinism promise of D9 depends on. Main trade-off: some extra parameters, and a future profiler will need its own decision.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-global" target="_blank" rel="noopener">Core Guidelines I.2</a> · <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">S9 Parent, Local Reasoning in C++</a> (<a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a>) · design D9</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 12">
+    </div>
+  </section>
+
+  <section aria-labelledby="s5">
+    <div class="prose stack">
+      <span class="eyebrow">5 · Contracts, invariants and errors</span>
+      <h2 id="s5">What a function promises, and what happens when a promise breaks</h2>
+      <p>Mobius runs inside Blender, so a failure must never take Blender down with it.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d13-title" data-num="13" data-title="Contracts: who checks preconditions">
+      <span class="tag">Decision 13 of 22</span>
+      <h3 id="d13-title">Who checks that a function was called with valid input?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A contract is a function's promise. Preconditions are what the caller must make true, such as v is a valid vertex of mesh. Postconditions are what the function promises back. Invariants are what is always true of an object. A narrow contract assumes valid input, so a wrong call is a bug in the caller (<code>std::vector::operator[]</code>). A wide contract accepts any input and reports bad input as an error (<code>std::vector::at</code>). Lakos argues that making a naturally narrow contract artificially wide costs speed, hides bugs and bloats error handling. C++26 adds language contracts (<code>pre</code>, <code>post</code>, <code>contract_assert</code>), which MSVC does not implement yet, so a macro, <code>MOBIUS_ASSERT</code>, stands in.</p>
+      </div>
+      <label class="option"><input type="radio" name="d13" value="0" data-label="Validate at boundaries, narrow contracts inside" checked><strong>A. Validate at the boundaries, narrow contracts inside<span class="rec">recommended</span></strong><div class="code"><pre><code>/// Requires: v is a valid vertex of mesh.
+[[nodiscard]] auto valence(const working_mesh&amp; mesh, vertex_index v) -&gt; std::size_t {
+    MOBIUS_ASSERT(v.value &lt; mesh.vertex_count());
+    return count_outgoing(mesh, v);
+}
+
+// At the boundary, bad input is an expected error:
+[[nodiscard]] auto load_mesh(const std::filesystem::path&amp; path)
+    -&gt; std::expected&lt;working_mesh, error&gt;;</code></pre></div><span class="why">Boundaries are file loading, the C API, guidance parsing and the validate/repair stage. They return <code>std::expected</code> errors. Inside the engine, functions have narrow contracts, checked with <code>MOBIUS_ASSERT</code> and stated in the brief as Requires.</span></label>
+      <label class="option"><input type="radio" name="d13" value="1" data-label="Wide contracts everywhere"><strong>B. Wide contracts everywhere</strong><div class="code"><pre><code>[[nodiscard]] auto valence(const working_mesh&amp; mesh, vertex_index v)
+    -&gt; std::expected&lt;std::size_t, error&gt; {
+    if (v.value &gt;= mesh.vertex_count()) {
+        return std::unexpected{error{error_code::InvalidIndex, "vertex out of range"}};
+    }
+    return count_outgoing(mesh, v);
+}</code></pre></div><span class="why">Every function checks its inputs and returns <code>std::expected</code>. Safe, but every caller handles errors that can only be bugs, and every call pays for the check.</span></label>
+      <label class="option"><input type="radio" name="d13" value="2" data-label="No explicit checks, trust callers"><strong>C. No explicit checks</strong><div class="code"><pre><code>[[nodiscard]] auto valence(const working_mesh&amp; mesh, vertex_index v) -&gt; std::size_t {
+    return count_outgoing(mesh, v);     // a bad v reads random memory
+}</code></pre></div><span class="why">Least code and fastest. Misuse is found only if a test happens to trigger it.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. User data is checked once, where errors are expected. Internal misuse is a bug and is caught loudly. Main trade-off: internal callers must respect the documented preconditions, so every brief must state them.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://accu.org/video/spring-2011/lakos" target="_blank" rel="noopener">S15 Lakos, Defensive Programming Done Right</a> · <a href="https://youtu.be/OWsepDEh5lQ" target="_blank" rel="noopener">S8 Parent and Abrahams, Better Code: Contracts</a> (<a href="https://sean-parent.stlab.cc/presentations/2023-10-06-better-code-contracts/2023-10-06-better-code-contracts.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf" target="_blank" rel="noopener">S24 P2900 Contracts for C++</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-pre" target="_blank" rel="noopener">Core Guidelines I.5</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-expects" target="_blank" rel="noopener">Core Guidelines I.6</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-post" target="_blank" rel="noopener">Core Guidelines I.7</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 13">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d14-title" data-num="14" data-title="What a failed MOBIUS_ASSERT does, and how much is checked">
+      <span class="tag">Decision 14 of 22</span>
+      <h3 id="d14-title">What happens when an internal check fails, and which checks run in Release builds?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Mobius runs as a DLL inside the artist's Blender. If the engine calls <code>abort()</code>, Blender closes and unsaved work is lost. D10 already says exceptions are for programmer errors and that the C API catches everything. Checks also differ in cost. The check <code>index &lt; count</code> is nearly free, while validating a whole mesh is O(n), meaning its time grows with the mesh size, and is too slow to run after every edit in Release. Lakos uses several assert levels that are selected at build time.</p>
+      </div>
+      <label class="option"><input type="radio" name="d14" value="0" data-label="Two assert levels, failure throws contract_violation" checked><strong>A. Two levels, failure throws and the run is discarded<span class="rec">recommended</span></strong><div class="code"><pre><code>MOBIUS_ASSERT(v.value &lt; mesh.vertex_count());        // cheap: on in every build
+MOBIUS_ASSERT_AUDIT(check_invariants(mesh).empty()); // O(n): Debug and tests only
+
+// On failure: throw mobius::contract_violation{file, line, expression}.
+// A debugger, if attached, breaks first.
+// The C API catch-all returns an internal-error status,
+// the run is discarded, and Blender keeps running.</code></pre></div><span class="why">When MSVC ships C++26 contracts, the macros can map to them behind a feature guard.</span></label>
+      <label class="option"><input type="radio" name="d14" value="1" data-label="Debug-only checks, failure aborts"><strong>B. Debug-only checks, failure aborts</strong><div class="code"><pre><code>assert(v.value &lt; mesh.vertex_count());   // compiled out in Release
+
+// Release: the bad index is used and results are silently wrong.
+// Debug: abort() ends the process, taking Blender with it.</code></pre></div><span class="why">The classic <code>assert</code>. No Release cost, but Release builds meet bugs unprotected.</span></label>
+      <label class="option"><input type="radio" name="d14" value="2" data-label="Always-on checks, failure aborts"><strong>C. Always-on checks, failure aborts at once</strong><div class="code"><pre><code>MOBIUS_ASSERT(v.value &lt; mesh.vertex_count());
+// On failure: std::abort()
+// Blender closes at once and unsaved work is lost.</code></pre></div><span class="why">Fail fast: nothing runs on broken data. For a plug-in inside someone else's application, the cost of failing is high.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Bugs are caught in Release too, and an artist never loses a Blender session to an engine bug. Main trade-off: after a violation the data of that run may be broken. That is safe only because the engine works on its own copies of the input (D11) and throws the whole run away. Cheap checks cost a little Release speed.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://accu.org/video/spring-2011/lakos" target="_blank" rel="noopener">S15 Lakos, Defensive Programming Done Right</a> · <a href="https://youtu.be/MO-qehjc04s" target="_blank" rel="noopener">S10 Parent, All the Safeties</a> · <a href="https://youtu.be/OWsepDEh5lQ" target="_blank" rel="noopener">S8 Parent and Abrahams, Better Code: Contracts</a> (<a href="https://sean-parent.stlab.cc/presentations/2023-10-06-better-code-contracts/2023-10-06-better-code-contracts.pdf" target="_blank" rel="noopener">slides</a>) · design D10</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 14">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d15-title" data-num="15" data-title="Who guards the half-edge mesh invariants">
+      <span class="tag">Decision 15 of 22</span>
+      <h3 id="d15-title">What protects the half-edge mesh from becoming inconsistent?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>In a half-edge mesh each edge is split into two half-edges that point in opposite directions. Each half-edge knows its <code>next</code> half-edge around the face, its <code>twin</code> on the other side, its <code>origin</code> vertex and its <code>face</code>. Invariants include: <code>twin(twin(h)) == h</code>, <code>next(next(next(h))) == h</code> on a triangle, the origin of <code>twin(h)</code> is the target of <code>h</code>, and boundary half-edges use a sentinel value. If any of these breaks, every algorithm silently computes garbage. D3 also needs edits, because feature curves are embedded by splitting triangles.</p>
+      </div>
+      <label class="option"><input type="radio" name="d15" value="0" data-label="working_mesh class, operators keep invariants, check_invariants" checked><strong>A. working_mesh class with invariant-keeping operators<span class="rec">recommended</span></strong><div class="code"><pre><code>class working_mesh {
+public:
+    [[nodiscard]] auto twin(halfedge_index h) const -&gt; halfedge_index { return m_twin[h.value]; }
+    auto flip_edge(edge_index e) -&gt; void;       // each operator keeps every invariant
+    auto split_edge(edge_index e) -&gt; vertex_index;
+
+private:
+    std::vector&lt;halfedge_index&gt; m_twin;
+    std::vector&lt;halfedge_index&gt; m_next;
+};
+
+[[nodiscard]] auto check_invariants(const working_mesh&amp; mesh) -&gt; std::vector&lt;invariant_violation&gt;;</code></pre></div><span class="why">Reading is through <code>const</code> accessors. Topology changes only through <code>split_edge</code>, <code>split_face</code>, <code>flip_edge</code> and <code>collapse_edge</code>. <code>check_invariants</code> runs under <code>MOBIUS_ASSERT_AUDIT</code> after every operator in Debug and tests, and at every pipeline stage boundary.</span></label>
+      <label class="option"><input type="radio" name="d15" value="1" data-label="Immutable mesh, validating builder"><strong>B. Immutable mesh built by a validating builder</strong><div class="code"><pre><code>class mesh_builder {
+public:
+    auto add_triangle(vertex_index a, vertex_index b, vertex_index c) -&gt; void;
+    [[nodiscard]] auto build() -&gt; std::expected&lt;working_mesh, error&gt;;   // validates once
+};
+
+// working_mesh has no mutating functions.
+// Embedding a curve builds a new mesh.</code></pre></div><span class="why">The purest value design. Rebuilding a 500k-vertex mesh for each embedded curve is slow.</span></label>
+      <label class="option"><input type="radio" name="d15" value="2" data-label="Open struct, validate() by convention"><strong>C. Open struct, validate() by convention</strong><div class="code"><pre><code>struct working_mesh {
+    std::vector&lt;halfedge_index&gt; twin;
+    std::vector&lt;halfedge_index&gt; next;
+};
+
+// Any code may write twin[h.value].
+// validate(mesh) runs only if somebody remembers.</code></pre></div><span class="why">Simplest and fastest. Nothing guards the invariants, so a bug shows up far from its cause.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. It is the same design as pmp-library and geometry-central, and the invariants get one guardian. Main trade-off: every new kind of edit must be written as an invariant-keeping operator.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-struct" target="_blank" rel="noopener">Core Guidelines C.2</a> · <a href="https://www.pmp-library.org/tutorial.html" target="_blank" rel="noopener">S22 pmp-library tutorial</a> · <a href="https://geometry-central.net/surface/surface_mesh/navigation/" target="_blank" rel="noopener">S23 geometry-central surface mesh navigation</a> · reading list #2, Botsch et al., Polygon Mesh Processing</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 15">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d16-title" data-num="16" data-title="The error type and warnings">
+      <span class="tag">Decision 16 of 22</span>
+      <h3 id="d16-title">What does the error type hold, and how are non-fatal problems reported?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>D10 already fixed that failures return <code>std::expected&lt;T, error&gt;</code>. Still open: what <code>error</code> holds, and how non-fatal problems are reported, such as the solver hitting its iteration cap, symmetry being weak, or a stroke being ignored. A warning is not an error. The run continues and the result is still valid.</p>
+      </div>
+      <label class="option"><input type="radio" name="d16" value="0" data-label="One error struct, warnings returned as diagnostics" checked><strong>A. One engine-wide error struct, warnings as values<span class="rec">recommended</span></strong><div class="code"><pre><code>enum class error_code { InvalidMesh, SolveFailed, FileNotFound };   // maps to C API status
+
+struct error {
+    error_code code;
+    std::string message;
+    std::string stage;                       // context: where it happened
+    std::string file;                        // input file, if any
+    std::uint32_t line = 0;
+    std::uint32_t column = 0;
+    std::optional&lt;std::uint32_t&gt; element;   // vertex or face index, if known
+};
+
+struct diagnostic {
+    std::string stage;
+    std::string message;
+};
+
+struct cross_field_output {
+    cross_field field;
+    std::vector&lt;diagnostic&gt; warnings;   // collected in stage order
+};</code></pre></div><span class="why">The <code>error_code</code> enum maps one to one onto C API status codes. Each stage returns its warnings inside its output struct, and the pipeline collects them into the run report in stage order, so the report is deterministic.</span></label>
+      <label class="option"><input type="radio" name="d16" value="1" data-label="Per-module error enums, warnings to a logger"><strong>B. Per-module error enums, warnings to a logger</strong><div class="code"><pre><code>enum class io_error { FileNotFound, BadFormat };
+enum class mesh_error { NonManifold, Degenerate };
+
+[[nodiscard]] auto load_mesh(const std::filesystem::path&amp; path)
+    -&gt; std::expected&lt;working_mesh, io_error&gt;;
+
+// Each type must be converted again to reach one C API status.
+logger::instance().warn("solver hit its iteration cap");</code></pre></div><span class="why">Each module owns its errors. Conversion code appears at every module boundary, and warnings depend on a global logger.</span></label>
+      <label class="option"><input type="radio" name="d16" value="2" data-label="Error is a message string"><strong>C. Error is just a message string</strong><div class="code"><pre><code>using error = std::string;
+
+[[nodiscard]] auto solve(const working_mesh&amp; mesh) -&gt; std::expected&lt;cross_field, error&gt;;
+
+// Callers must read the text to decide what to do.</code></pre></div><span class="why">Least code. Callers cannot react to a kind of failure without parsing text, and warnings go to a global log.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. There is one mapping to the C API, and warnings are part of a stage's result instead of hidden global state (decision 12). Main trade-off: the central <code>error_code</code> enum is touched by every module.</p>
+      <p class="note"><strong>Sources:</strong> design D10, D11, D12 · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#re-throw" target="_blank" rel="noopener">Core Guidelines E.2</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#re-errors" target="_blank" rel="noopener">Core Guidelines E.3</a> · <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">S9 Parent, Local Reasoning in C++</a> (<a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a>)</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 16">
+    </div>
+  </section>
+
+  <section aria-labelledby="s6">
+    <div class="prose stack">
+      <span class="eyebrow">6 · Data layout and performance</span>
+      <h2 id="s6">How data sits in memory and when memory may be allocated</h2>
+      <p>Mobius processes meshes of 500k vertices, so layout matters. Only the cheap rules are decided here.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d17-title" data-num="17" data-title="Layout of per-element data">
+      <span class="tag">Decision 17 of 22</span>
+      <h3 id="d17-title">How is data stored for each vertex, face or edge?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Array of structures (AoS) keeps all data of one vertex together: a <code>std::vector&lt;vertex_data&gt;</code> where <code>vertex_data</code> holds position, normal and curvature. Structure of arrays (SoA) keeps one array per attribute: one array of positions, one of normals, one of <code>k1</code>. A loop that needs only positions then reads only positions, which suits the CPU cache, GPU buffers (D9) and the C API's flat arrays. D3 already chose SoA for mesh connectivity. This decision covers everything else: analysis results, fields and guidance weights.</p>
+      </div>
+      <label class="option"><input type="radio" name="d17" value="0" data-label="Attribute arrays indexed by strong index" checked><strong>A. Attribute arrays indexed by strong index<span class="rec">recommended</span></strong><div class="code"><pre><code>template &lt;typename T&gt;
+class vertex_attribute {
+public:
+    [[nodiscard]] auto operator[](vertex_index v) const -&gt; const T&amp; { return m_values[v.value]; }
+    [[nodiscard]] auto operator[](vertex_index v) -&gt; T&amp; { return m_values[v.value]; }
+
+private:
+    std::vector&lt;T&gt; m_values;
+};
+
+auto k1 = vertex_attribute&lt;double&gt;{};       // one array per attribute
+auto normals = vertex_attribute&lt;vec3d&gt;{};</code></pre></div><span class="why">Small structs are fine for one element's result (<code>curvature_result</code>) and for fields always used together (<code>vec3d</code> stays x, y, z).</span></label>
+      <label class="option"><input type="radio" name="d17" value="1" data-label="AoS objects"><strong>B. AoS: one struct per vertex or face</strong><div class="code"><pre><code>struct vertex_data {
+    vec3d position;
+    vec3d normal;
+    double k1;
+    double k2;
+};
+
+std::vector&lt;vertex_data&gt; vertices;      // a loop over k1 also loads position and normal</code></pre></div><span class="why">Easy to read and debug: everything about one vertex is in one place. Slower for loops that need one field.</span></label>
+      <label class="option"><input type="radio" name="d17" value="2" data-label="SoA all the way down, split vec3d"><strong>C. SoA all the way down</strong><div class="code"><pre><code>struct vec3_arrays {
+    std::vector&lt;double&gt; x;
+    std::vector&lt;double&gt; y;
+    std::vector&lt;double&gt; z;
+};
+
+// Fastest for SIMD, but a dot product must be written per component.</code></pre></div><span class="why">Best for SIMD. Every formula becomes harder to read, so it is better applied later to a measured hot kernel.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. It is cache-friendly and GPU-ready without making maths code awkward. Main trade-off: data for one vertex is spread over several arrays, so debugging one vertex means looking in several places.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.org/blog/2015/01/cppcon-2014-data-oriented-design-and-c-mike-acton" target="_blank" rel="noopener">S16 Acton, Data-Oriented Design and C++</a> · <a href="https://www.dataorienteddesign.com/dodbook/" target="_blank" rel="noopener">S17 Fabian, Data-Oriented Design</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rper-access" target="_blank" rel="noopener">Core Guidelines Per.19</a> · <a href="https://www.pmp-library.org/tutorial.html" target="_blank" rel="noopener">S22 pmp-library tutorial</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 17">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d18-title" data-num="18" data-title="Allocation in hot code">
+      <span class="tag">Decision 18 of 22</span>
+      <h3 id="d18-title">May code allocate memory inside loops that run per element or per iteration?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Heap allocation (<code>new</code>, or a <code>std::vector</code> that grows) is slow compared with arithmetic, and it takes an unpredictable amount of time. Inside a loop over 500k vertices, or inside a solver's iterations, it can dominate the run time. A scratch buffer is a work array that is created once and reused.</p>
+      </div>
+      <label class="option"><input type="radio" name="d18" value="0" data-label="No allocation in hot loops, reuse scratch buffers" checked><strong>A. No allocation inside per-element or per-iteration loops<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto solve_field(const working_mesh&amp; mesh, int iterations) -&gt; std::vector&lt;double&gt; {
+    auto angles = std::vector&lt;double&gt;(mesh.vertex_count());
+    auto scratch = std::vector&lt;double&gt;(mesh.vertex_count());    // sized once
+    for (auto it = 0; it &lt; iterations; ++it) {
+        relax_into(mesh, angles, scratch);                      // no allocation here
+        std::swap(angles, scratch);
+    }
+    return angles;
+}</code></pre></div><span class="why">Size buffers before the loop, and let stages own scratch buffers and reuse them across solver iterations (the <code>*_into</code> functions of decision 09). Ordinary standard containers everywhere else.</span></label>
+      <label class="option"><input type="radio" name="d18" value="1" data-label="Plain containers, optimise after profiling"><strong>B. Plain containers, optimise after profiling</strong><div class="code"><pre><code>for (auto it = 0; it &lt; iterations; ++it) {
+    auto next = relax(mesh, angles);    // allocates a new vector every iteration
+    angles = std::move(next);
+}
+// Fine until a profiler says otherwise.</code></pre></div><span class="why">Simplest code. The most common performance trap stays open until someone measures it.</span></label>
+      <label class="option"><input type="radio" name="d18" value="2" data-label="Custom allocators from day one"><strong>C. Custom allocators or arenas from day one</strong><div class="code"><pre><code>auto arena = std::pmr::monotonic_buffer_resource{};
+auto scratch = std::pmr::vector&lt;double&gt;{&amp;arena};
+
+// Every function that allocates now takes or knows an allocator.</code></pre></div><span class="why">Maximum control. Adds machinery and types everywhere before any measurement asks for it.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. It is the cheapest rule that avoids the most common performance trap, with no new machinery. Main trade-off: some functions get an extra scratch-buffer parameter.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://isocpp.org/blog/2015/01/cppcon-2014-data-oriented-design-and-c-mike-acton" target="_blank" rel="noopener">S16 Acton, Data-Oriented Design and C++</a> · <a href="https://www.computerenhance.com/p/clean-code-horrible-performance" target="_blank" rel="noopener">S18 Muratori, Clean Code, Horrible Performance</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rper-efficiency" target="_blank" rel="noopener">Core Guidelines Per.7</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 18">
+    </div>
+  </section>
+
+  <section aria-labelledby="s7">
+    <div class="prose stack">
+      <span class="eyebrow">7 · Concurrency</span>
+      <h2 id="s7">Who may use threads</h2>
+      <p>One decision, tied to the determinism promise: the same input gives the same bytes on any number of threads.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d19-title" data-num="19" data-title="Who may use threads and synchronization">
+      <span class="tag">Decision 19 of 22</span>
+      <h3 id="d19-title">Which code may use threads, mutexes and atomics?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>A data race is two threads touching the same memory at once, with at least one writing and no synchronization. It is undefined behaviour. Parent's goal of no raw synchronization primitives means that algorithm code should not use mutexes, atomics, semaphores or fences directly, but a higher-level tool such as tasks. D9 already fixes an in-house <code>parallel_for</code> with fixed chunk boundaries, so results are bit-identical for any thread count.</p>
+      </div>
+      <label class="option"><input type="radio" name="d19" value="0" data-label="Algorithms never touch threads, only parallel_for does" checked><strong>A. Algorithms are pure per-chunk functions<span class="rec">recommended</span></strong><div class="code"><pre><code>// Pure per-chunk function: reads shared const data, writes only its own range.
+auto smooth_chunk(const working_mesh&amp; mesh, std::span&lt;const double&gt; in, std::span&lt;double&gt; out,
+                  chunk range) -&gt; void;
+
+parallel_for(context, mesh.vertex_count(), [&amp;](chunk range) {
+    smooth_chunk(mesh, in, out, range);
+});</code></pre></div><span class="why">Only <code>parallel_for</code>, the cancellation flag and progress counters (in the pipeline and backend modules) use threads, atomics or mutexes. <code>std::thread</code>, <code>std::async</code> and the <code>std::execution</code> policies stay out of algorithm code, because they do not give fixed chunk order and would break bit-identical reductions.</span></label>
+      <label class="option"><input type="radio" name="d19" value="1" data-label="Mutexes and atomics allowed in algorithms"><strong>B. Mutexes and atomics where convenient</strong><div class="code"><pre><code>auto total = 0.0;
+auto lock = std::mutex{};
+parallel_for(context, count, [&amp;](chunk range) {
+    const auto part = sum_chunk(range);
+    const auto guard = std::lock_guard{lock};
+    total += part;      // the sum order depends on thread timing
+});</code></pre></div><span class="why">Easy to write. Floating-point sums change with the order of addition, so results may differ between runs.</span></label>
+      <label class="option"><input type="radio" name="d19" value="2" data-label="Single-threaded first"><strong>C. Single-threaded first, parallel later</strong><div class="code"><pre><code>// First version: plain loops, one thread.
+// Later: every algorithm is rewritten for chunks
+// and tested again for races and repeatability.</code></pre></div><span class="why">Simplest start. The rewrite touches every algorithm later.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. There are no data races by construction, and determinism is guaranteed in one place. Main trade-off: scattered writes (building adjacency lists) need a two-pass count-then-fill pattern instead of a lock, which is more code but deterministic.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/cpp-seasoning" target="_blank" rel="noopener">S1 Parent, C++ Seasoning</a> (<a href="https://sean-parent.stlab.cc/presentations/2013-09-11-cpp-seasoning/cpp-seasoning.pdf" target="_blank" rel="noopener">slides</a>) · <a href="https://www.youtube.com/watch?v=zULU6Hhp42w" target="_blank" rel="noopener">S5 Parent, Better Code: Concurrency</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rconc-races" target="_blank" rel="noopener">Core Guidelines CP.2</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rconc-data" target="_blank" rel="noopener">Core Guidelines CP.3</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rconc-task" target="_blank" rel="noopener">Core Guidelines CP.4</a> · design D9</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 19">
+    </div>
+  </section>
+
+  <section aria-labelledby="s8">
+    <div class="prose stack">
+      <span class="eyebrow">8 · Names of relationships</span>
+      <h2 id="s8">How mesh navigation and function names read</h2>
+      <p>Names are the cheapest documentation. These two choices make them tell the reader more.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d20-title" data-num="20" data-title="How half-edge navigation is spelled">
+      <span class="tag">Decision 20 of 22</span>
+      <h3 id="d20-title">How does code walk from one half-edge to its neighbours?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>Parent's Better Code: Relationships says that a relationship is a connection between objects, such as the twin or the next half-edge of this half-edge. Code should state relationships explicitly and keep them consistent. Mesh libraries spell this navigation in three ways: queries on the mesh that take index values, cursor handles that carry a pointer to the mesh, or direct access to the arrays.</p>
+      </div>
+      <label class="option"><input type="radio" name="d20" value="0" data-label="Mesh queries taking index values" checked><strong>A. Mesh queries that take index values<span class="rec">recommended</span></strong><div class="code"><pre><code>// Members of working_mesh:
+[[nodiscard]] auto next(halfedge_index h) const -&gt; halfedge_index;
+[[nodiscard]] auto twin(halfedge_index h) const -&gt; halfedge_index;
+[[nodiscard]] auto origin(halfedge_index h) const -&gt; vertex_index;
+[[nodiscard]] auto target(halfedge_index h) const -&gt; vertex_index;
+
+for (const auto h : mesh.outgoing(v)) {
+    const auto other = mesh.target(h);
+}</code></pre></div><span class="why">Indices stay plain 4-byte regular values with no hidden pointer (pmp-library style). Names are nouns without <code>get_</code>, and the pair is called <code>twin</code>. Neighbourhoods are ranges.</span></label>
+      <label class="option"><input type="radio" name="d20" value="1" data-label="Cursor handles carrying a mesh pointer"><strong>B. Cursor handles that carry the mesh</strong><div class="code"><pre><code>for (const auto h : v.outgoing()) {         // v carries a pointer to the mesh
+    const auto other = h.twin().origin();
+}
+
+// A handle is 16 bytes: a mesh pointer plus an index.</code></pre></div><span class="why">Geometry-central style. Reads fluently, but every handle hides a reference to the mesh: reference semantics, a lifetime risk, and 16 bytes instead of 4.</span></label>
+      <label class="option"><input type="radio" name="d20" value="2" data-label="Direct array access"><strong>C. Direct array access</strong><div class="code"><pre><code>const auto t = mesh.twin[h.value];      // public arrays
+const auto o = mesh.origin[t.value];
+
+// No function can guard the invariants.</code></pre></div><span class="why">Fastest to write. The arrays become public and the invariants lose their guardian (decision 15).</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. It keeps indices as values (decisions 01 and 11) and keeps the arrays private (decision 15). Main trade-off: chains read inside-out, <code>mesh.origin(mesh.twin(mesh.next(h)))</code>, so small helpers such as <code>mesh.target(h)</code> cover the common chains.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://www.youtube.com/watch?v=ejF6qqohp3M" target="_blank" rel="noopener">S7 Parent, Better Code: Relationships</a> · <a href="https://www.pmp-library.org/tutorial.html" target="_blank" rel="noopener">S22 pmp-library tutorial</a> · <a href="https://geometry-central.net/surface/surface_mesh/navigation/" target="_blank" rel="noopener">S23 geometry-central surface mesh navigation</a></p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 20">
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d21-title" data-num="21" data-title="Naming functions by what they do to data">
+      <span class="tag">Decision 21 of 22</span>
+      <h3 id="d21-title">Should a function name tell you if it changes data, and if it is cheap?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>The Swift API guidelines name functions by their side effects. A function with no side effects reads as a noun (<code>length(v)</code>, <code>mesh.vertex_count()</code>). One that changes something reads as an imperative verb (<code>normalize(v)</code>, <code>flip_edge(...)</code>). A mutating and a non-mutating pair uses the verb and its past participle: <code>normalize(v)</code> changes v, while <code>normalized(v)</code> returns a new value, like sort and sorted. <code>std::vector::empty()</code> shows why this matters. It reads like a verb, but it only asks a question.</p>
+      </div>
+      <label class="option"><input type="radio" name="d21" value="0" data-label="Nouns for queries, verbs for changes, expensive work named as verbs" checked><strong>A. Nouns for queries, verbs for changes, verbs that say how for expensive work<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto vertex_count() const -&gt; std::size_t;              // cheap query: noun
+[[nodiscard]] auto is_boundary(vertex_index v) const -&gt; bool;        // question: statement
+auto flip_edge(edge_index e) -&gt; void;                                // change: verb
+auto normalize(vec3d&amp; v) -&gt; void;                                    // changes v
+[[nodiscard]] auto normalized(const vec3d&amp; v) -&gt; vec3d;              // returns a new value
+[[nodiscard]] auto solve_cross_field(const working_mesh&amp; mesh) -&gt; cross_field;  // expensive: verb</code></pre></div><span class="why">No <code>get_</code> or <code>set_</code> prefixes. Expensive computations are verbs that say how (<code>solve_cross_field</code>, <code>estimate_curvature</code>, <code>build_bvh</code>), so a heavy call never looks like a cheap query.</span></label>
+      <label class="option"><input type="radio" name="d21" value="1" data-label="get_/set_ prefixes for accessors"><strong>B. get_ and set_ prefixes for accessors</strong><div class="code"><pre><code>[[nodiscard]] auto get_vertex_count() const -&gt; std::size_t;
+auto set_position(vertex_index v, const vec3d&amp; p) -&gt; void;
+[[nodiscard]] auto get_area(face_index f) const -&gt; double;
+[[nodiscard]] auto solve_cross_field(const working_mesh&amp; mesh) -&gt; cross_field;</code></pre></div><span class="why">Familiar from Java and Qt. Longer names, and get_ says nothing about cost.</span></label>
+      <label class="option"><input type="radio" name="d21" value="2" data-label="Verbs everywhere"><strong>C. Verbs everywhere</strong><div class="code"><pre><code>[[nodiscard]] auto compute_area(face_index f) const -&gt; double;   // cheap, but sounds like work
+[[nodiscard]] auto calculate_normal(face_index f) const -&gt; vec3d;
+[[nodiscard]] auto compute_vertex_count() const -&gt; std::size_t;  // a stored counter</code></pre></div><span class="why">One simple rule. Cheap queries sound like heavy work, so the name no longer warns about cost.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. The name alone tells a reader whether a call changes data and whether it is cheap. Main trade-off: it needs judgment on what counts as cheap.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noopener">S20 Swift API Design Guidelines</a> · Core Guidelines F.1</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 21">
+    </div>
+  </section>
+
+  <section aria-labelledby="s9">
+    <div class="prose stack">
+      <span class="eyebrow">9 · Testing</span>
+      <h2 id="s9">Which kinds of tests exist</h2>
+      <p>The last decision. It builds on the test layout already fixed in decision 003.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d22-title" data-num="22" data-title="What kinds of tests Mobius has">
+      <span class="tag">Decision 22 of 22</span>
+      <h3 id="d22-title">Which kinds of automated tests should the project have?</h3>
+      <div class="idea">
+        <span class="eyebrow">The idea</span>
+        <p>An example test checks one input against one expected output. A property-based test (QuickCheck) states a rule that must hold for all inputs and checks it on many generated inputs with a fixed seed, for example that after any sequence of edge flips <code>check_invariants</code> finds nothing and V - E + F is unchanged. A golden test compares output with a stored file byte for byte, which the deterministic JSON writer of D12 makes possible. A determinism test runs the same work on 1 and on 8 threads and requires identical bytes. Decision 003 already fixed the file layout (mirrored paths, SUBCASE).</p>
+      </div>
+      <label class="option"><input type="radio" name="d22" value="0" data-label="Layered: examples, properties, determinism, golden, in-house generator" checked><strong>A. Layered tests with an in-house generator<span class="rec">recommended</span></strong><div class="code"><pre><code>TEST_CASE("mesh/working_mesh: flips keep invariants and the Euler characteristic") {
+    auto generator = random_mesh_generator{.seed = 42};
+    for (auto i = 0; i &lt; 200; ++i) {
+        auto mesh = generator.next();
+        const auto before = euler_characteristic(mesh);
+        flip_random_edges(mesh, generator);
+        CHECK(check_invariants(mesh).empty());
+        CHECK(euler_characteristic(mesh) == before);
+    }
+}</code></pre></div><span class="why">Example tests for every function. Property tests with fixed seeds for mesh operators and solvers. A determinism test for every parallel kernel. Golden reports for the regression corpus (D13). Every bug fix starts with a failing test that reproduces it.</span></label>
+      <label class="option"><input type="radio" name="d22" value="1" data-label="Example tests plus regression corpus only"><strong>B. Example tests plus the regression corpus</strong><div class="code"><pre><code>TEST_CASE("mesh/working_mesh: flip edge on a pair of triangles") {
+    auto mesh = make_two_triangles();
+    mesh.flip_edge(edge_index{0});
+    CHECK(check_invariants(mesh).empty());
+}
+// plus the regression corpus; no random inputs</code></pre></div><span class="why">Less to build. Edge cases nobody thought of stay undiscovered.</span></label>
+      <label class="option"><input type="radio" name="d22" value="2" data-label="Layered, with an external property-testing library"><strong>C. Layered, with an external property-testing library</strong><div class="code"><pre><code>// Same layers as option A, but property tests use
+// an external property-testing library:
+//   + ready-made generators and shrinking of failing inputs
+//   - one more dependency to build, update and check on MSVC</code></pre></div><span class="why">Saves writing a generator framework. Adds a dependency to a project that keeps its dependency list short.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Option A. Random inputs find the mesh edge cases nobody thinks of, and determinism is tested where it can break. Main trade-off: generators for valid random meshes take work to write.</p>
+      <p class="note"><strong>Sources:</strong> <a href="https://www.cis.upenn.edu/~bcpierce/courses/552-2008/resources/icfp-quickcheck.pdf" target="_blank" rel="noopener">S21 Claessen and Hughes, QuickCheck</a> · design D9, D12, D13</p>
+      <input type="text" class="card-note" placeholder="Your note (optional)" aria-label="Your note for decision 22">
+    </div>
+  </section>
+
+  <section aria-labelledby="s-answers">
+    <div class="prose stack">
+      <span class="eyebrow">Your answers</span>
+      <h2 id="s-answers">Copy and paste into the chat</h2>
+      <p>The box below always shows your current choices and any one-line notes you typed on a card. Add anything else under Notes, then paste the text into the chat.</p>
+    </div>
+    <div class="panel">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btnCopy">Copy my answers</button>
+        <span class="status" id="copyStatus" aria-live="polite"></span>
+      </div>
+      <textarea id="answers" readonly aria-label="Your answers as text"></textarea>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Sources and further reading</strong>
+    <ul>
+      <li><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines" target="_blank" rel="noopener">C++ Core Guidelines</a>. Anchors for individual rules (such as C.11 and F.16) are linked on the cards. Base address: <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines" target="_blank" rel="noopener">https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines</a></li>
+      <li>Sean Parent's own list of talks and papers: <a href="https://sean-parent.stlab.cc/papers-and-presentations" target="_blank" rel="noopener">sean-parent.stlab.cc/papers-and-presentations</a></li>
+      <li><strong>S1.</strong> Sean Parent, C++ Seasoning (also called 3 Goals for Better Code), GoingNative 2013. <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/cpp-seasoning" target="_blank" rel="noopener">video</a>, <a href="https://sean-parent.stlab.cc/presentations/2013-09-11-cpp-seasoning/cpp-seasoning.pdf" target="_blank" rel="noopener">slides</a></li>
+      <li><strong>S2.</strong> Sean Parent, Inheritance Is The Base Class of Evil, GoingNative 2013 (a short version of S3). <a href="https://learn.microsoft.com/en-us/shows/goingnative-2013/inheritance-base-class-of-evil" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S3.</strong> Sean Parent, Value Semantics and Concept-based Polymorphism, C++Now 2012. <a href="https://youtu.be/_BpMYeUFXv8" target="_blank" rel="noopener">video</a>, <a href="https://sean-parent.stlab.cc/presentations/2013-09-24-value-semantics/value-semantics.pdf" target="_blank" rel="noopener">slides</a></li>
+      <li><strong>S4.</strong> Sean Parent, Better Code: Data Structures, CppCon 2015. <a href="https://www.youtube.com/watch?v=sWgDk-o-6ZE" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S5.</strong> Sean Parent, Better Code: Concurrency, NDC London 2017 (given at several venues 2015 to 2018). <a href="https://www.youtube.com/watch?v=zULU6Hhp42w" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S6.</strong> Sean Parent, Better Code: Runtime Polymorphism, NDC London 2017. <a href="https://www.youtube.com/watch?v=QGcVXgEVMJg" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S7.</strong> Sean Parent, Better Code: Relationships, CppCon 2019. <a href="https://www.youtube.com/watch?v=ejF6qqohp3M" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S8.</strong> Sean Parent and Dave Abrahams, Better Code: Contracts, CppCon 2023. <a href="https://youtu.be/OWsepDEh5lQ" target="_blank" rel="noopener">video</a>, <a href="https://sean-parent.stlab.cc/presentations/2023-10-06-better-code-contracts/2023-10-06-better-code-contracts.pdf" target="_blank" rel="noopener">slides</a></li>
+      <li><strong>S9.</strong> Sean Parent, Local Reasoning in C++, NDC TechTown 2024 (also NWCPP, May 2024). <a href="https://youtu.be/bhizxAXQlWc" target="_blank" rel="noopener">video</a>, <a href="https://sean-parent.stlab.cc/presentations/2024-09-12-local-reasoning/2024-09-12-local-reasoning.pdf" target="_blank" rel="noopener">slides</a></li>
+      <li><strong>S10.</strong> Sean Parent, All the Safeties, C++Now 2023 (keynote version at C++ on Sea 2023). <a href="https://youtu.be/MO-qehjc04s" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S11.</strong> Dave Abrahams, Value Semantics: Safety, Independence, Projection, &amp; Future of Programming, CppCon 2022 (a listing page that embeds the CppCon video). <a href="https://classcentral.com/classroom/youtube-value-semantics-safety-independence-projection-future-of-programming-dave-abrahams-cppcon-22-320377" target="_blank" rel="noopener">listing</a></li>
+      <li><strong>S12.</strong> Alexander Stepanov and Paul McJones, Elements of Programming, Addison-Wesley 2009 (free authors' edition PDF). <a href="https://elementsofprogramming.com/" target="_blank" rel="noopener">book</a></li>
+      <li><strong>S13.</strong> James C. Dehnert and Alexander Stepanov, Fundamentals of Generic Programming, in Generic Programming (Springer LNCS 1766, 2000). <a href="https://www.stepanovpapers.com/DeSt98.pdf" target="_blank" rel="noopener">paper</a></li>
+      <li><strong>S14.</strong> John Lakos, Value Semantics: It ain't about the syntax!, CppCon 2015 (two parts). <a href="https://accu.org/conf-docs/PDFs_2015/JohnLakos-Value%20Semantics.pdf" target="_blank" rel="noopener">slides</a></li>
+      <li><strong>S15.</strong> John Lakos, Defensive Programming Done Right (ACCU 2011, later CppCon versions). <a href="https://accu.org/video/spring-2011/lakos" target="_blank" rel="noopener">video</a></li>
+      <li><strong>S16.</strong> Mike Acton, Data-Oriented Design and C++, CppCon 2014 keynote. <a href="https://isocpp.org/blog/2015/01/cppcon-2014-data-oriented-design-and-c-mike-acton" target="_blank" rel="noopener">page</a></li>
+      <li><strong>S17.</strong> Richard Fabian, Data-Oriented Design, 2018 (free online edition). <a href="https://www.dataorienteddesign.com/dodbook/" target="_blank" rel="noopener">book</a></li>
+      <li><strong>S18.</strong> Casey Muratori, "Clean" Code, Horrible Performance, Computer, Enhance!, February 2023. <a href="https://www.computerenhance.com/p/clean-code-horrible-performance" target="_blank" rel="noopener">article</a></li>
+      <li><strong>S19.</strong> Scott Meyers, How Non-Member Functions Improve Encapsulation, C/C++ Users Journal, February 2000. <a href="https://drdobbs.com/cpp/how-non-member-functions-improve-encapsu/184401197" target="_blank" rel="noopener">article</a></li>
+      <li><strong>S20.</strong> Swift API Design Guidelines. <a href="https://www.swift.org/documentation/api-design-guidelines/" target="_blank" rel="noopener">guidelines</a></li>
+      <li><strong>S21.</strong> Koen Claessen and John Hughes, QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs, ICFP 2000. <a href="https://www.cis.upenn.edu/~bcpierce/courses/552-2008/resources/icfp-quickcheck.pdf" target="_blank" rel="noopener">paper</a></li>
+      <li><strong>S22.</strong> pmp-library (Polygon Mesh Processing Library) documentation. <a href="https://www.pmp-library.org/tutorial.html" target="_blank" rel="noopener">docs</a></li>
+      <li><strong>S23.</strong> geometry-central documentation, surface mesh navigation and elements. <a href="https://geometry-central.net/surface/surface_mesh/navigation/" target="_blank" rel="noopener">docs</a></li>
+      <li><strong>S24.</strong> P2900, Contracts for C++, adopted into C++26 at Hagenberg in February 2025 (MSVC 14.52 does not implement it, design D15). <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf" target="_blank" rel="noopener">paper</a></li>
+    </ul>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const ta = document.getElementById('answers');
+  function answers() {
+    let out = 'Coding style decisions, part 2\n';
+    document.querySelectorAll('.decision').forEach(function (d) {
+      const c = d.querySelector('input[type=radio]:checked');
+      out += d.dataset.num + ' ' + d.dataset.title + ': ' + (c ? c.dataset.label : '(no answer)');
+      const n = d.querySelector('.card-note');
+      const text = n ? n.value.trim() : '';
+      if (text) { out += ' (note: ' + text + ')'; }
+      out += '\n';
+    });
+    return out + 'Notes: ';
+  }
+  const refresh = function () { ta.value = answers(); };
+  document.querySelectorAll('.decision input[type=radio]').forEach(function (e) { e.addEventListener('change', refresh); });
+  document.querySelectorAll('.decision .card-note').forEach(function (e) { e.addEventListener('input', refresh); });
+  refresh();
+  document.getElementById('btnCopy').addEventListener('click', function () {
+    refresh();
+    const st = document.getElementById('copyStatus');
+    const fallback = function () { ta.focus(); ta.select(); st.textContent = 'Copying is blocked here. The text is selected, so press Ctrl+C.'; };
+    try {
+      navigator.clipboard.writeText(ta.value).then(function () { st.textContent = 'Copied. Paste it into the chat and add any notes.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>

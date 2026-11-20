@@ -12,8 +12,9 @@ context: |
   Mobius is a suite of artist-guided geometry-processing operations for game and real-time 3D
   production, sharing one deterministic C++ core: retopology first, then UV unwrapping,
   normals control (sharp edges, custom/weighted normals, bake cages) and assisted texturing.
-  New operations register into the shared operation pipeline, guidance model, symmetry service,
-  C API and Blender addon shell; they must not fork or special-case those shared parts.
+  New operations are added to the shared operation list (one entry, shipped in a new release,
+  decision 004) and use the shared pipeline, guidance model, symmetry service, C API and
+  Blender addon shell; they must not fork or special-case those shared parts.
   Artist guidance must act inside the solvers, never as post-processing.
   AI and local models only assist: they run out of process and contribute guidance layers or
   generated images; final geometry comes from deterministic, mathematically controlled code.
