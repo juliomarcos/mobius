@@ -1,0 +1,37 @@
+Papers kept locally in science/ (the PDFs are git-ignored).
+Download each one from the link below to restore the local copy under the same file name.
+Full citations and why each matters are in docs/learning/README.md (Reading list).
+
+robust-and-controllable-quadrangulation-techreport.pdf
+  Takayama, Panozzo, Sorkine-Hornung, Sorkine-Hornung,
+  "Robust and Controllable Quadrangulation of Triangular and Rectangular Regions", ETH Zurich technical report, 2013.
+  PDF: https://kenshi84.github.io/sketch-retopo/sketch-retopo-techreport.pdf
+
+animation-aware-quadrangulation-2013.pdf
+  Marcias, Pietroni, Panozzo, Puppo, Sorkine-Hornung, "Animation-Aware Quadrangulation", SGP 2013.
+  DOI: https://doi.org/10.1111/cgf.12183
+  PDF: https://vcg-legacy.isti.cnr.it/Publications/2013/MPPPS13/AnimationAwareQuadrFinal.pdf
+
+gravotet-a-fast-multigrid-hierarchy-construction-for-tetrahedral-meshes-smi-2026-padilla-et-al.pdf
+  Padilla, Wiersma, Huisman, Campolattaro, Sorkine-Hornung, Hildebrandt,
+  "GravoTet: A Fast Multigrid Hierarchy Construction for Tetrahedral Meshes", Computers & Graphics 138, 2026 (open access).
+  DOI: https://doi.org/10.1016/j.cag.2026.104662
+  Record: https://repository.tudelft.nl/record/uuid:277fa7a7-3267-47b2-b092-cf22b7f7f0dd
+
+SymCL_-_Partial_Symmetry_Detection_for_3D_Geometry.pdf
+  Kobsik, Lim, Kobbelt, "Partial Symmetry Detection for 3D Geometry using Contrastive Learning
+  with Geodesic Point Cloud Patches", VMV 2026.
+  arXiv (earlier preprint version): https://arxiv.org/abs/2312.08230
+
+smooth_arap_2025.pdf
+  Oehri, Herholz, Sorkine-Hornung, "Higher-Order Continuity for Smooth As-Rigid-As-Possible Shape Modeling",
+  JCGT 14(1), 2025.
+  PDF: https://jcgt.org/published/0014/01/10/paper.pdf
+  arXiv: https://arxiv.org/abs/2501.10335
+
+TetWeave_SIGGRAPH_2025_compressed_10MB.pdf
+  Binninger, Wiersma, Herholz, Sorkine-Hornung, "TetWeave: Isosurface Extraction using On-The-Fly Delaunay
+  Tetrahedral Grids for Gradient-Based Mesh Optimization", ACM TOG 44(4), SIGGRAPH 2025.
+  DOI: https://doi.org/10.1145/3730851
+  arXiv: https://arxiv.org/abs/2505.04590
+  Code: https://github.com/AlexandreBinninger/TetWeave

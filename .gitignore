@@ -1,0 +1,22 @@
+# Generated projects and build output (design D1)
+/build/
+
+# Sharpmake binaries downloaded by tools/build.ps1 (design D1)
+/tools/sharpmake/
+
+# Local copies of papers; download links are in science/papers.txt
+/science/*.pdf
+
+# Visual Studio and editor state
+.vs/
+*.user
+*.suo
+
+# Python caches (Blender addon, tools)
+__pycache__/
+*.pyc
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store

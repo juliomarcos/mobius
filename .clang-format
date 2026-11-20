@@ -1,0 +1,47 @@
+# clang-format settings for Mobius. See docs/decisions/003-coding-style.md.
+# Keys are limited to those available in clang-format 17, the oldest version
+# bundled with Visual Studio that we target.
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Layout
+IndentWidth: 4
+ColumnLimit: 120
+BreakBeforeBraces: Attach
+AccessModifierOffset: -4
+NamespaceIndentation: None
+FixNamespaceComments: true
+Cpp11BracedListStyle: true
+SpaceBeforeParens: ControlStatements
+
+# Pointers, references and const (west const: const vec3d& p, T* ptr).
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+# QualifierAlignment: Left moves const to the left of the type. clang-format
+# documents this option as able to change code, not only whitespace. It was
+# chosen deliberately to enforce west const (decision 003, answer 09).
+QualifierAlignment: Left
+
+# Short constructs
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Every template declaration goes on its own line.
+# (BreakTemplateDeclarations is the clang-format 19 name; 17 needs this one.)
+AlwaysBreakTemplateDeclarations: Yes
+
+# Includes: own header, Mobius, third-party, standard library.
+# A test file such as vec_test.cpp treats vec.h as its own header.
+IncludeBlocks: Regroup
+IncludeIsMainRegex: '(_test)?$'
+IncludeCategories:
+  - Regex: '^[<"]mobius/'
+    Priority: 1
+  - Regex: '^[<"](simdjson|doctest)'
+    Priority: 2
+  - Regex: '^<[a-z_]+>$'
+    Priority: 3
+SortIncludes: CaseSensitive
+
+InsertNewlineAtEOF: true

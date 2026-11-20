@@ -1,0 +1,50 @@
+schema: spec-driven
+
+# Project context (optional)
+# Add only constraints that should guide OpenSpec artifacts and workflows.
+# Include constraints an agent cannot infer by reading the code.
+# Keep general project documentation and discoverable codebase facts out.
+# Example:
+#   context: |
+#     Designs and tasks must cover Windows, macOS, and Linux
+#     Write all artifacts in Spanish
+context: |
+  Mobius is a suite of artist-guided geometry-processing operations for game and real-time 3D
+  production, sharing one deterministic C++ core: retopology first, then UV unwrapping,
+  normals control (sharp edges, custom/weighted normals, bake cages) and assisted texturing.
+  New operations register into the shared operation pipeline, guidance model, symmetry service,
+  C API and Blender addon shell; they must not fork or special-case those shared parts.
+  Artist guidance must act inside the solvers, never as post-processing.
+  AI and local models only assist: they run out of process and contribute guidance layers or
+  generated images; final geometry comes from deterministic, mathematically controlled code.
+  Results must be bit-identical for the same input, settings, build, backend and device,
+  regardless of thread count.
+  Toolchain: MSVC only (Visual Studio 2026, toolset 14.52+), /std:c++latest with C++23 as the
+  guaranteed baseline; newer features need feature-test guards and a C++23 fallback.
+  Build with Sharpmake. Windows x64 first; keep the core portable.
+  Dependencies must be few, pinned, and licensed for closed-source commercial use (no GPL/LGPL);
+  model weights used by providers must have their licence recorded and non-commercial ones flagged.
+  The Blender addon supports Blender 4.2 LTS and later and talks to the engine only via the C API.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+operations:
+  apply:
+    guidance:
+      - The user is learning the domain and stays in charge. Tasks titled "Learning gate" belong to the user; never check them yourself.
+      - Before starting any task in a group that has an unchecked learning gate (task N.0), stop and tell the user which module in docs/learning/README.md comes next. Offer to prepare its explainer, and wait.
+      - When preparing a module, publish an interactive explainer that cites primary sources, give a hands-on exercise using the user's own models or existing tools, and list the module's decisions in plain language, with a recommendation and the trade-off for each.
+      - Record every decision the user makes in docs/decisions/ (one file per decision, using the template there). If a decision changes the plan, update the change's artifacts before implementing.
+      - After finishing an algorithmic task group (4, 7, 8 and 9), stop and walk the user through what was built, in plain language and with preview-tool screenshots on corpus meshes and the user's own models, before starting the next group.
+      - Explain each code change in terms of the concepts from the learning modules, not only in implementation terms.

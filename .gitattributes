@@ -1,0 +1,11 @@
+# Line endings follow .editorconfig (decision 003): LF everywhere,
+# CRLF only for Windows batch files. Overrides a global core.autocrlf.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.pdf binary
+*.png binary
+*.jpg binary
+*.blend binary

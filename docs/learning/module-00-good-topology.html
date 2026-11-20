@@ -1,0 +1,609 @@
+<title>Reading Good Topology</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with figures that widen to 1040px; mesh diagrams are the protagonists. */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #16202c;
+  --muted: #566273;
+  --line: #d3dae3;
+  --face: #e9eef5;
+  --edge: #8794a6;
+  --accent: #2b55c9;
+  --accent-soft: #dfe7fb;
+  --pole3: #0b8a80;
+  --pole5: #c9711d;
+  --pole6: #c0364a;
+  --ghost: #aab4c2;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+    --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+    --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+  --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+  --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { display: grid; gap: 56px; max-width: 1040px; margin: 0 auto; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 650; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; }
+.stack { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.13rem; color: var(--ink); max-width: 64ch; }
+.muted { color: var(--muted); }
+a { color: var(--accent); }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+header.top { display: grid; gap: 16px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); }
+
+/* Figures */
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.figure .canvas { padding: 12px; border-right: 1px solid var(--line); min-width: 0; }
+.figure .side { padding: 18px 20px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.figure svg { width: 100%; height: auto; display: block; }
+@media (max-width: 760px) {
+  .figure { grid-template-columns: minmax(0, 1fr); }
+  .figure .canvas { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { font: 500 0.85rem var(--font-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tab:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: 500 0.85rem var(--font-body); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.readout { font-family: var(--font-mono); font-size: 0.85rem; display: grid; gap: 4px; font-variant-numeric: tabular-nums; }
+.readout div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding-bottom: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 0.85rem; color: var(--muted); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.swatch-line { display: inline-block; width: 18px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: 3px; background: var(--accent); }
+.note { font-size: 0.92rem; color: var(--muted); }
+
+/* Mesh SVG */
+.m-face { fill: var(--face); }
+.m-edge { stroke: var(--edge); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.m-hit { stroke: transparent; stroke-width: 12; vector-effect: non-scaling-stroke; cursor: pointer; }
+.m-hit:hover + .m-hover, .m-hover.on { stroke: var(--accent); opacity: 0.45; }
+.m-hover { stroke: transparent; stroke-width: 4; vector-effect: non-scaling-stroke; pointer-events: none; }
+.m-loop { stroke: var(--accent); stroke-width: 3.5; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+.m-end { fill: var(--surface); stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.p3 { fill: var(--pole3); } .p5 { fill: var(--pole5); } .p6 { fill: var(--pole6); }
+.bone { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; opacity: 0.55; }
+.joint { fill: var(--ink); opacity: 0.7; }
+.ghost { fill: none; stroke: var(--ghost); stroke-dasharray: 4 4; stroke-width: 1.2; }
+.ring { stroke: var(--accent); stroke-width: 2; }
+
+/* Deformation */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; }
+.pair > div { padding: 14px; min-width: 0; display: grid; gap: 8px; align-content: start; }
+.pair > div + div { border-left: 1px solid var(--line); }
+@media (max-width: 640px) { .pair { grid-template-columns: minmax(0, 1fr); } .pair > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+.slider-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); }
+.slider-row input[type=range] { flex: 1 1 220px; accent-color: var(--accent); }
+.big { font-family: var(--font-display); font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 0.93rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.mobius td { background: var(--accent-soft); }
+
+/* Quad split mini figure */
+.split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 560px; }
+.split figure { margin: 0; display: grid; gap: 4px; text-align: center; font-size: 0.85rem; color: var(--muted); }
+
+/* Lists */
+ol.steps, ul.points { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.check { display: grid; gap: 8px; }
+.check label { display: flex; gap: 10px; align-items: flex-start; }
+.check input { margin-top: 5px; accent-color: var(--accent); }
+.two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 760px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+
+/* Decisions */
+.decision { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; }
+.decision .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.option input { margin-top: 5px; accent-color: var(--accent); }
+.option strong { font-weight: 600; }
+.option .why { grid-column: 2; font-size: 0.9rem; color: var(--muted); }
+.rec { font-size: 0.78rem; font-family: var(--font-mono); color: var(--accent); margin-left: 6px; }
+.rank { display: grid; gap: 8px; }
+.rank-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 10px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.rank-row select { font: inherit; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+textarea { width: 100%; min-height: 120px; font: 0.88rem var(--font-mono); padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.status { font-size: 0.88rem; color: var(--muted); min-height: 1.4em; }
+footer { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 10px; font-size: 0.9rem; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <header class="top">
+    <span class="eyebrow">Mobius learning path · Module 0 of 7 · gate 3.0</span>
+    <h1>Reading good topology</h1>
+    <p class="lede">A sculpt or scan has millions of triangles and no structure. Retopology rebuilds it as a light mesh whose edges are placed on purpose. This module is about what "on purpose" means: edge loops, poles, and why their placement decides whether a model animates, unwraps and bakes well.</p>
+    <div class="meta-row"><span>~40 minutes</span><span>2 interactive figures</span><span>1 hands-on exercise</span><span>2 decisions for you</span></div>
+  </header>
+
+  <!-- 1. Loops and poles -->
+  <section aria-labelledby="s-loops">
+    <div class="prose stack">
+      <span class="eyebrow">1 · Edge loops and poles</span>
+      <h2 id="s-loops">Loops run straight through regular vertices and stop at poles</h2>
+      <p>In a quad mesh most vertices have <strong>4 edges</strong>. At such a vertex an edge has exactly one partner straight across, so you can keep walking "straight ahead". That chain is an <strong>edge loop</strong>, and it is what artists select, slide, cut and animate along.</p>
+      <p>A vertex with 3 or 5 edges is a <strong>pole</strong> (also called an irregular vertex or singularity). There is no straight-across edge there, so loops end or change course. Poles let edge flow turn corners and change density, so they are not mistakes. Where they sit is the craft.</p>
+    </div>
+    <div class="figure">
+      <div class="canvas"><svg id="meshSvg" role="img" aria-label="Quad mesh diagram. Click an edge to highlight its edge loop."></svg></div>
+      <div class="side">
+        <div class="tabs" role="tablist" aria-label="Example meshes">
+          <button class="tab" role="tab" id="tab-grid" data-mesh="grid">Regular grid</button>
+          <button class="tab" role="tab" id="tab-p3" data-mesh="p3">3-pole</button>
+          <button class="tab" role="tab" id="tab-p5" data-mesh="p5">5-pole</button>
+          <button class="tab" role="tab" id="tab-eye" data-mesh="eye">Loops around an eye</button>
+        </div>
+        <p id="meshBlurb" class="note"></p>
+        <div class="readout" aria-live="polite">
+          <div><span>Selected loop</span><span id="rLoop">–</span></div>
+          <div><span>Ends at</span><span id="rEnds">–</span></div>
+          <div><span>3-poles · 5-poles</span><span id="rPoles">–</span></div>
+          <div><span>Vertices · quads</span><span id="rCounts">–</span></div>
+        </div>
+        <div class="legend">
+          <span><span class="swatch-line"></span>edge loop</span>
+          <span><span class="dot p3" style="background:var(--pole3)"></span>3 edges</span>
+          <span><span class="dot" style="background:var(--pole5)"></span>5 edges</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="btnRandom">Show another loop</button>
+          <label class="note" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="chkPoles" checked> Mark poles</label>
+        </div>
+        <p class="note">Click any edge. Try one that touches the pole, then one a ring further out.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Deformation -->
+  <section aria-labelledby="s-deform">
+    <div class="prose stack">
+      <span class="eyebrow">2 · Why loops matter for animation</span>
+      <h2 id="s-deform">A joint bends only as well as the loops around it</h2>
+      <p>When a character is rigged, each vertex follows one or more bones, blended by weights. Edges stay straight between vertices, so a joint can only curve where there are vertices to curve. Both strips below use the same bones and the same smooth weights. The only difference is whether edge loops sit around the joint. In 3D each vertical line would be a ring of edges around the limb.</p>
+    </div>
+    <div class="figure" style="grid-template-columns:minmax(0,1fr)">
+      <div class="pair">
+        <div>
+          <h3>Three loops around the joint</h3>
+          <svg id="bendA" viewBox="-30 -205 400 265" role="img" aria-label="Limb strip with three edge loops at the joint, bent by the slider."></svg>
+          <div class="readout"><div><span>Area kept</span><span id="areaA">–</span></div></div>
+        </div>
+        <div>
+          <h3>No loop near the joint</h3>
+          <svg id="bendB" viewBox="-30 -205 400 265" role="img" aria-label="Limb strip with no edge loop near the joint, bent by the slider."></svg>
+          <div class="readout"><div><span>Area kept</span><span id="areaB">–</span></div></div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <label for="bend" class="note">Bend</label>
+        <input type="range" id="bend" min="0" max="130" value="80">
+        <span class="big" id="bendVal">80°</span>
+      </div>
+    </div>
+    <p class="prose note">The dashed outline is the rest pose. Watch the inner side of the elbow. Without loops the whole bend happens inside one long quad, so the surface folds into a crease and loses volume. Real rigs show the same effect in 3D as the "candy-wrapper" twist and the collapsing elbow.</p>
+  </section>
+
+  <!-- 3. Why quads -->
+  <section aria-labelledby="s-quads">
+    <div class="prose stack">
+      <span class="eyebrow">3 · Quads in a triangle world</span>
+      <h2 id="s-quads">Game engines draw triangles, so why do artists want quads?</h2>
+      <p>Every quad becomes two triangles on export, and the engine never sees a quad. Quads still matter because of what happens before export:</p>
+      <ul class="points">
+        <li><strong>Editing.</strong> Loops and rings can be selected, slid and cut only on quads. Triangles break the chain.</li>
+        <li><strong>Deformation.</strong> Loops give joints, mouths and eyelids rings of vertices to bend with, as above.</li>
+        <li><strong>UVs.</strong> Grid-like quads unwrap into straight, evenly spaced UV lines, which keeps textures undistorted and packing efficient.</li>
+        <li><strong>Subdivision and LODs.</strong> Quads subdivide and reduce predictably, while triangles create pinches.</li>
+        <li><strong>Baking and shading.</strong> Even, well-shaped faces give clean normal bakes. Long, thin triangles cause shading artefacts.</li>
+      </ul>
+      <p>Triangulation is the last step, and with quads you control which diagonal each quad gets.</p>
+    </div>
+    <div class="split" aria-hidden="true">
+      <figure><svg viewBox="0 0 100 80"><polygon class="m-face" points="10,10 90,15 85,70 15,65"/><polygon fill="none" class="m-edge" points="10,10 90,15 85,70 15,65"/></svg>quad (authoring)</figure>
+      <figure><svg viewBox="0 0 100 80"><polygon class="m-face" points="10,10 90,15 85,70 15,65"/><polygon fill="none" class="m-edge" points="10,10 90,15 85,70 15,65"/><line class="m-loop" x1="10" y1="10" x2="85" y2="70"/></svg>split one way</figure>
+      <figure><svg viewBox="0 0 100 80"><polygon class="m-face" points="10,10 90,15 85,70 15,65"/><polygon fill="none" class="m-edge" points="10,10 90,15 85,70 15,65"/><line class="m-loop" x1="90" y1="15" x2="15" y2="65"/></svg>or the other (export)</figure>
+    </div>
+  </section>
+
+  <!-- 4. Poles are unavoidable -->
+  <section aria-labelledby="s-count">
+    <div class="prose stack">
+      <span class="eyebrow">4 · A rule you can't break</span>
+      <h2 id="s-count">Closed shapes need poles, and the count is fixed by the shape</h2>
+      <p>Give each vertex a score of <span class="mono">4 − (number of edges)</span>: a 3-pole scores +1, a 5-pole −1 and a regular vertex 0. On any closed all-quad mesh the scores add up to a number fixed by the number of holes through the shape. It follows from Euler's formula (V − E + F), which Module 1 covers, and Module 4 shows the same rule for direction fields.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shape</th><th>Holes through it</th><th>Sum of scores</th><th>What that means</th></tr></thead>
+        <tbody>
+          <tr><td>Sphere, head, closed body</td><td class="num">0</td><td class="num">+8</td><td>At least eight 3-poles, as on a subdivided cube. Extra poles must come in balancing pairs, for example ten 3-poles and two 5-poles.</td></tr>
+          <tr><td>Torus, ring, donut</td><td class="num">1</td><td class="num">0</td><td>Can be made with no poles at all.</td></tr>
+          <tr><td>Two-hole shape (pretzel half, two-handled mug)</td><td class="num">2</td><td class="num">−8</td><td>Needs a net of eight extra 5-poles.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">So the question is never whether there are poles, only where they go. Artists put them where edge flow has to turn or change density (mouth corners, eye corners, the shoulder, the base of fingers) and keep them off areas that bend hard or catch highlights. Vertices with 6 or more edges are usually avoided. Mobius's direction field (Module 4) decides pole placement automatically, and your strokes and regions steer it.</p>
+  </section>
+
+  <!-- 5. Approaches -->
+  <section aria-labelledby="s-tools">
+    <div class="prose stack">
+      <span class="eyebrow">5 · Where Mobius fits</span>
+      <h2 id="s-tools">Four ways to get a lighter mesh</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Approach</th><th>Output</th><th>Strength</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td>Decimation (Blender's Decimate modifier, game-engine LOD tools)</td><td>Triangles</td><td>Fast, keeps the shape at a polygon budget</td><td>No loops, no structure. Fine for distant LODs, poor for editing, rigging and UVs.</td></tr>
+          <tr><td>Automatic quad remeshing (QuadriFlow, Instant Meshes)</td><td>Mostly or only quads</td><td>Clean grid that follows curvature, in seconds</td><td>Poles land where the maths puts them. Loops don't know about eyes, mouths or joints.</td></tr>
+          <tr><td>Hand retopology</td><td>Quads, deliberate</td><td>Loops follow anatomy and animation needs</td><td>Hours to days per asset</td></tr>
+          <tr class="mobius"><td><strong>Mobius (goal)</strong></td><td>Quads, guided</td><td>Automatic, but strokes, density paint, regions and symmetry steer the solver itself</td><td>The quality depends on the guidance tools being fast and intuitive</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6. Hands-on -->
+  <section aria-labelledby="s-hands">
+    <div class="prose stack">
+      <span class="eyebrow">6 · Hands-on</span>
+      <h2 id="s-hands">Remesh one of your sculpts with two existing tools</h2>
+      <p>Use one model you know well, ideally a head or a character with a face. Work on a copy (Shift+D in Blender), because QuadriFlow replaces the mesh in place.</p>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <h3>A · Blender's QuadriFlow</h3>
+        <ol class="steps">
+          <li>Select the copy in Object Mode.</li>
+          <li>Open <strong>Properties → Object Data</strong> (green triangle tab) and find the <strong>Remesh</strong> panel, or press F3 and search <span class="mono">QuadriFlow Remesh</span>.</li>
+          <li>Choose the <strong>Quad</strong> mode and click <strong>QuadriFlow Remesh</strong>.</li>
+          <li>Set a face count (try 3,000), and try it with and without <em>Use Mesh Symmetry</em> and <em>Preserve Sharp</em>.</li>
+        </ol>
+        <p class="note">QuadriFlow needs a clean, closed (manifold) mesh and reports an error otherwise. Module 1 explains why. Option names can differ slightly between Blender versions.</p>
+      </div>
+      <div class="panel">
+        <h3>B · Instant Meshes</h3>
+        <ol class="steps">
+          <li>Download the Windows build linked from <a href="https://github.com/wjakob/instant-meshes" target="_blank" rel="noopener">github.com/wjakob/instant-meshes</a>, and export your model from Blender as OBJ.</li>
+          <li>Click <strong>Open mesh</strong>, then set a target size close to the QuadriFlow run.</li>
+          <li>Click the first blue button to solve the <strong>orientation field</strong>. The little crosses are a 4-RoSy field, the subject of Module 4.</li>
+          <li>Try a brush tool (the first icon in a "Tool" row) to comb directions on the face, solve again and watch the crosses follow.</li>
+          <li>Click the second blue button to solve the <strong>position field</strong>, then <strong>Export mesh</strong> and import it into Blender.</li>
+        </ol>
+        <p class="note">Instant Meshes is the method Mobius's meshing step builds on (design D6). Its brushes are a primitive form of Mobius's guidance strokes.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>What to look for, on both results</h3>
+      <div class="check" id="lookFor">
+        <label><input type="checkbox" id="lf1"> Do closed loops circle the eyes and the mouth, or does the grid just run across them?</label>
+        <label><input type="checkbox" id="lf2"> Where did the poles land? In Edit Mode, zoom in and count the edges at vertices where the grid changes direction. Some Blender versions also have a "Poles by Count" option under <span class="mono">Select → Select All by Trait</span>.</label>
+        <label><input type="checkbox" id="lf3"> Are sharp edges and creases kept, or rounded off?</label>
+        <label><input type="checkbox" id="lf4"> Is there more detail where the sculpt has detail, or the same density everywhere?</label>
+        <label><input type="checkbox" id="lf5"> Any triangles or 5-sided faces? Where?</label>
+        <label><input type="checkbox" id="lf6"> Which result would you rather rig? Which would you rather UV-unwrap?</label>
+      </div>
+      <p class="note">Bring two or three observations back to the chat. They will shape later decisions.</p>
+    </div>
+  </section>
+
+  <!-- 7. Decisions -->
+  <section aria-labelledby="s-decide">
+    <div class="prose stack">
+      <span class="eyebrow">7 · Your decisions</span>
+      <h2 id="s-decide">Two choices the plan is currently making for you</h2>
+      <p>Pick an answer for each one. "Copy my answers" puts them on the clipboard so you can paste them into the chat. Claude records them in <span class="mono">docs/decisions/</span> and updates the plan if needed.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d1-title">
+      <span class="tag">Decision 001 · output mode</span>
+      <h3 id="d1-title">What should Mobius produce by default: only quads, or mostly quads?</h3>
+      <p class="note">Mobius builds all-quad meshes by making a coarser mesh and splitting every face into quads. That guarantees pure quads, but every leftover triangle becomes a 3-pole and every pentagon a 5-pole, and it gives slightly less local control over face count.</p>
+      <label class="option"><input type="radio" name="d1" id="d1a" value="all-quad"><strong>All-quad by default</strong><span class="why">What artists expect for editing, subdivision and rigging. A few extra poles.</span></label>
+      <label class="option"><input type="radio" name="d1" id="d1b" value="quad-dominant"><strong>Quad-dominant by default</strong><span class="why">Fewest poles and tightest face budget. Occasional triangles and pentagons break loops.</span></label>
+      <label class="option"><input type="radio" name="d1" id="d1c" value="per-objective" checked><strong>Depends on the objective</strong><span class="rec">recommended</span><span class="why">All-quad for deformable characters, organic sculpts and hard surface. Quad-dominant for static game assets, which are triangulated on export anyway and gain most from a tight budget. Always overridable.</span></label>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d2-title">
+      <span class="tag">Decision 002 · priorities</span>
+      <h3 id="d2-title">Which kinds of assets matter most to you first?</h3>
+      <p class="note">All four objectives ship, but tuning time and test models go to the top-ranked ones first. There is no recommendation here, because this depends on your own work.</p>
+      <div class="rank" id="rank">
+        <div class="rank-row"><span>Deformable characters (rigged, animated)</span><select id="rk1" aria-label="Rank for deformable characters"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="rank-row"><span>Organic sculpts and scans (creatures, rocks, AI-generated models)</span><select id="rk2" aria-label="Rank for organic sculpts and scans"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+        <div class="rank-row"><span>Hard-surface (weapons, vehicles, machinery)</span><select id="rk3" aria-label="Rank for hard-surface"><option>1</option><option>2</option><option selected>3</option><option>4</option></select></div>
+        <div class="rank-row"><span>Static game props (environment, set dressing)</span><select id="rk4" aria-label="Rank for static props"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></div>
+      </div>
+      <p class="note">The ranking shown is a placeholder. Change it to match your work.</p>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btnCopy">Copy my answers</button>
+        <span class="status" id="copyStatus" aria-live="polite"></span>
+      </div>
+      <textarea id="answers" readonly aria-label="Your answers as text"></textarea>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-next">
+    <div class="prose stack">
+      <span class="eyebrow">Next</span>
+      <h2 id="s-next">Module 1 · Meshes as data</h2>
+      <p>Gate 3.0 opens after Modules 0 and 1. Module 1 looks under the hood: how a mesh is stored, what "manifold" means and why QuadriFlow refuses some meshes, and how Euler's formula produces the pole rule from section 4.</p>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Sources and further reading</strong>
+    <ul>
+      <li>Bommes et al., "Quad-Mesh Generation and Processing: A Survey", <em>Computer Graphics Forum</em> 32(6), 2013. Background for sections 1, 4 and 5.</li>
+      <li>Jakob, Tarini, Panozzo, Sorkine-Hornung, "Instant Field-Aligned Meshes", <em>ACM Transactions on Graphics</em> (SIGGRAPH Asia), 2015. <a href="https://github.com/wjakob/instant-meshes" target="_blank" rel="noopener">Instant Meshes repository</a>.</li>
+      <li>Huang et al., "QuadriFlow: A Scalable and Robust Method for Quadrangulation", <em>Computer Graphics Forum</em> (SGP), 2018. The method behind Blender's QuadriFlow Remesh.</li>
+      <li>Keenan Crane, <em>Discrete Differential Geometry: An Applied Introduction</em>, CMU course notes. Euler characteristic and its consequences, for Modules 1 and 4.</li>
+      <li>Botsch, Kobbelt, Pauly, Alliez, Lévy, <em>Polygon Mesh Processing</em>, A K Peters, 2010. Chapter on remeshing.</li>
+    </ul>
+    <span class="muted">The deformation figure uses simple 2D linear blend skinning with a smooth weight ramp around the joint. Its numbers illustrate the effect and are not measurements of a real rig.</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+  // ---------- Mesh construction ----------
+  function builder() {
+    const verts = [], faces = [], keys = new Map();
+    const v = (x, y) => { const k = Math.round(x * 1000) + ',' + Math.round(y * 1000); if (keys.has(k)) return keys.get(k); verts.push([x, y]); keys.set(k, verts.length - 1); return verts.length - 1; };
+    return { verts, faces, v };
+  }
+  const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  function bilinear(A, B, C, D, u, w) {
+    return [A[0]*(1-u)*(1-w) + B[0]*u*(1-w) + C[0]*u*w + D[0]*(1-u)*w,
+            A[1]*(1-u)*(1-w) + B[1]*u*(1-w) + C[1]*u*w + D[1]*(1-u)*w];
+  }
+  function subdivQuad(b, A, B, C, D, k) {
+    const id = [];
+    for (let i = 0; i <= k; i++) { id.push([]); for (let j = 0; j <= k; j++) { const p = bilinear(A, B, C, D, i / k, j / k); id[i].push(b.v(p[0], p[1])); } }
+    for (let i = 0; i < k; i++) for (let j = 0; j < k; j++) b.faces.push([id[i][j], id[i+1][j], id[i+1][j+1], id[i][j+1]]);
+  }
+  function polyPatch(n, k) {
+    const b = builder(), R = 100, c = [0, 0], P = [], M = [];
+    for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + i * 2 * Math.PI / n; P.push([R * Math.cos(a), R * Math.sin(a)]); }
+    for (let i = 0; i < n; i++) M.push(lerp(P[i], P[(i + 1) % n], 0.5));
+    for (let i = 0; i < n; i++) subdivQuad(b, c, M[(i + n - 1) % n], P[i], M[i], k);
+    return b;
+  }
+  function grid(cols, rows) {
+    const b = builder(), s = 24;
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++)
+      b.faces.push([b.v(i*s, j*s), b.v((i+1)*s, j*s), b.v((i+1)*s, (j+1)*s), b.v(i*s, (j+1)*s)]);
+    return b;
+  }
+  function eye() {
+    const b = builder(), rings = 6, seg = 28, r0 = 26, r1 = 92;
+    const p = (r, j) => { const a = j * 2 * Math.PI / seg; return [1.55 * r * Math.cos(a), r * Math.sin(a)]; };
+    for (let i = 0; i < rings; i++) for (let j = 0; j < seg; j++) {
+      const ra = r0 + (r1 - r0) * i / rings, rb = r0 + (r1 - r0) * (i + 1) / rings, j2 = (j + 1) % seg;
+      const q = [p(ra, j), p(rb, j), p(rb, j2), p(ra, j2)].map(xy => b.v(xy[0], xy[1]));
+      b.faces.push(q);
+    }
+    return b;
+  }
+
+  function analyse(m) {
+    const nV = m.verts.length, nbrs = Array.from({ length: nV }, () => new Set()), vf = Array.from({ length: nV }, () => []);
+    const edges = new Map();
+    m.faces.forEach((f, fi) => {
+      for (let i = 0; i < f.length; i++) {
+        const a = f[i], b = f[(i + 1) % f.length], key = a < b ? a + ',' + b : b + ',' + a;
+        if (!edges.has(key)) edges.set(key, { a: Math.min(a, b), b: Math.max(a, b), n: 0 });
+        edges.get(key).n++;
+        nbrs[a].add(b); nbrs[b].add(a); vf[a].push(fi);
+      }
+    });
+    const boundary = new Array(nV).fill(false);
+    edges.forEach(e => { if (e.n === 1) { boundary[e.a] = true; boundary[e.b] = true; } });
+    const valence = nbrs.map(s => s.size);
+    return { nbrs, vf, edges, boundary, valence };
+  }
+  function shareFace(m, A, prev, cur, c) {
+    for (const fi of A.vf[cur]) {
+      const f = m.faces[fi], i = f.indexOf(cur), p = f[(i + f.length - 1) % f.length], n = f[(i + 1) % f.length];
+      if ((p === prev && n === c) || (p === c && n === prev)) return true;
+    }
+    return false;
+  }
+  function opposite(m, A, prev, cur) {
+    if (A.boundary[cur] || A.valence[cur] !== 4) return null;
+    for (const c of A.nbrs[cur]) if (c !== prev && !shareFace(m, A, prev, cur, c)) return c;
+    return null;
+  }
+  function trace(m, A, a, b) {
+    const out = [[a, b]], ends = [];
+    let closed = false;
+    const walk = (p0, c0) => {
+      let prev = p0, cur = c0;
+      for (let s = 0; s < 4000; s++) {
+        const nx = opposite(m, A, prev, cur);
+        if (nx === null) { ends.push(cur); return; }
+        if (cur === a && nx === b) { closed = true; return; }
+        out.push([cur, nx]); prev = cur; cur = nx;
+      }
+    };
+    walk(a, b);
+    if (!closed) walk(b, a);
+    return { edges: out, ends, closed };
+  }
+
+  // ---------- Mesh figure ----------
+  const MESHES = {
+    grid: { make: () => grid(9, 6), blurb: 'Every interior vertex has 4 edges, so every loop runs straight from border to border. Nothing can turn.', pick: [108, 72] },
+    p3: { make: () => polyPatch(3, 5), blurb: 'Three regular patches meet at a vertex with 3 edges. Loops reaching it end there, and the loops around it turn to wrap the corner. Common at the corners of a box-like shape and on a subdivided cube.', pick: [8, 10] },
+    p5: { make: () => polyPatch(5, 4), blurb: 'Five patches meet at a vertex with 5 edges. This is how density changes and how loops branch, as at the corners of the mouth or where a shoulder meets the chest.', pick: [10, -6] },
+    eye: { make: eye, blurb: 'Concentric loops around an opening, the layout of eyes and mouths. Ring loops close on themselves, and radial loops run from the opening outwards. A closed eyelid can only fold cleanly along a ring like this.', pick: [-10, 58] }
+  };
+  const svg = document.getElementById('meshSvg');
+  let cur = null, sel = null;
+  function draw(name) {
+    const spec = MESHES[name], m = spec.make(), A = analyse(m);
+    cur = { m, A, name };
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.mesh === name)));
+    document.getElementById('meshBlurb').textContent = spec.blurb;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    m.verts.forEach(([x, y]) => { minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y); });
+    const pad = 10; svg.setAttribute('viewBox', [minX - pad, minY - pad, maxX - minX + 2 * pad, maxY - minY + 2 * pad].join(' '));
+    svg.innerHTML = '';
+    const gF = mk('g', {}, svg), gE = mk('g', {}, svg), gL = mk('g', {}, svg), gP = mk('g', {}, svg);
+    m.faces.forEach(f => mk('polygon', { class: 'm-face', points: f.map(i => m.verts[i].join(',')).join(' ') }, gF));
+    A.edges.forEach(e => {
+      const [x1, y1] = m.verts[e.a], [x2, y2] = m.verts[e.b];
+      mk('line', { class: 'm-edge', x1, y1, x2, y2 }, gE);
+      const hit = mk('line', { class: 'm-hit', x1, y1, x2, y2 }, gE);
+      mk('line', { class: 'm-hover', x1, y1, x2, y2 }, gE);
+      hit.addEventListener('click', () => select(e.a, e.b));
+    });
+    cur.gL = gL; cur.gP = gP;
+    let n3 = 0, n5 = 0;
+    m.verts.forEach(([x, y], i) => {
+      if (A.boundary[i] || A.valence[i] === 4) return;
+      const v = A.valence[i]; if (v === 3) n3++; else if (v === 5) n5++;
+      mk('circle', { class: 'pole ' + (v === 3 ? 'p3' : v === 5 ? 'p5' : 'p6'), cx: x, cy: y, r: Math.max(2.5, (maxX - minX) / 70) }, gP);
+    });
+    document.getElementById('rPoles').textContent = n3 + ' · ' + n5;
+    document.getElementById('rCounts').textContent = m.verts.length + ' · ' + m.faces.length;
+    gP.style.display = document.getElementById('chkPoles').checked ? '' : 'none';
+    // default selection: edge nearest the blurb's pick point
+    let best = null, bd = Infinity;
+    A.edges.forEach(e => { const p = lerp(m.verts[e.a], m.verts[e.b], 0.5), d = (p[0] - spec.pick[0]) ** 2 + (p[1] - spec.pick[1]) ** 2; if (d < bd) { bd = d; best = e; } });
+    select(best.a, best.b);
+  }
+  function select(a, b) {
+    const { m, A, gL } = cur; sel = [a, b];
+    const t = trace(m, A, a, b);
+    gL.innerHTML = '';
+    t.edges.forEach(([p, q]) => mk('line', { class: 'm-loop', x1: m.verts[p][0], y1: m.verts[p][1], x2: m.verts[q][0], y2: m.verts[q][1] }, gL));
+    const r = Math.max(3, (svg.viewBox.baseVal.width) / 80);
+    t.ends.forEach(v => mk('circle', { class: 'm-end', cx: m.verts[v][0], cy: m.verts[v][1], r }, gL));
+    document.getElementById('rLoop').textContent = t.edges.length + ' edges · ' + (t.closed ? 'closed' : 'open');
+    const why = v => A.boundary[v] ? 'border' : A.valence[v] + '-pole';
+    document.getElementById('rEnds').textContent = t.closed ? 'nowhere (it closes)' : t.ends.map(why).join(' + ');
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { draw(t.dataset.mesh); try { localStorage.setItem('m0-tab', t.dataset.mesh); } catch (e) {} }));
+  document.getElementById('chkPoles').addEventListener('change', e => { if (cur) cur.gP.style.display = e.target.checked ? '' : 'none'; });
+  document.getElementById('btnRandom').addEventListener('click', () => {
+    const list = Array.from(cur.A.edges.values()); const e = list[Math.floor(Math.random() * list.length)]; select(e.a, e.b);
+  });
+  let startTab = 'p5'; try { const s = localStorage.getItem('m0-tab'); if (s && MESHES[s]) startTab = s; } catch (e) {}
+  draw(startTab);
+
+  // ---------- Deformation figure ----------
+  const ROWS = [-36, -12, 12, 36], J = [160, 0];
+  const LAYOUT_A = [0, 40, 80, 120, 140, 160, 180, 200, 240, 280, 320];
+  const LAYOUT_B = [0, 64, 128, 192, 256, 320];
+  const smooth = t => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 * t); };
+  function deform(x, y, th) {
+    const w = smooth((x - 120) / 80), c = Math.cos(-th), s = Math.sin(-th);
+    const dx = x - J[0], dy = y - J[1], rx = J[0] + c * dx - s * dy, ry = J[1] + s * dx + c * dy;
+    return [(1 - w) * x + w * rx, (1 - w) * y + w * ry];
+  }
+  const area = pts => { let s = 0; for (let i = 0; i < pts.length; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length]; s += x1 * y2 - x2 * y1; } return Math.abs(s) / 2; };
+  function drawStrip(svgEl, cols, th) {
+    svgEl.innerHTML = '';
+    const P = cols.map(x => ROWS.map(y => deform(x, y, th)));
+    const rest = [[0, -36], [320, -36], [320, 36], [0, 36]];
+    mk('polygon', { class: 'ghost', points: rest.map(p => p.join(',')).join(' ') }, svgEl);
+    const g = mk('g', {}, svgEl);
+    for (let i = 0; i < cols.length - 1; i++) for (let j = 0; j < ROWS.length - 1; j++) {
+      const q = [P[i][j], P[i + 1][j], P[i + 1][j + 1], P[i][j + 1]];
+      mk('polygon', { class: 'm-face', points: q.map(p => p.join(',')).join(' ') }, g);
+      mk('polygon', { class: 'm-edge', fill: 'none', points: q.map(p => p.join(',')).join(' ') }, g);
+    }
+    cols.forEach((x, i) => { if (x > 100 && x < 220) mk('polyline', { class: 'ring', fill: 'none', points: P[i].map(p => p.join(',')).join(' ') }, g); });
+    const end = [J[0] + 150 * Math.cos(-th), J[1] + 150 * Math.sin(-th)];
+    mk('line', { class: 'bone', x1: 10, y1: 0, x2: J[0], y2: J[1] }, svgEl);
+    mk('line', { class: 'bone', x1: J[0], y1: J[1], x2: end[0], y2: end[1] }, svgEl);
+    mk('circle', { class: 'joint', cx: J[0], cy: J[1], r: 4 }, svgEl);
+    const outline = P.map(c => c[0]).concat(P.slice().reverse().map(c => c[ROWS.length - 1]));
+    return area(outline) / (320 * 72);
+  }
+  const bend = document.getElementById('bend');
+  function updateBend() {
+    const deg = +bend.value, th = deg * Math.PI / 180;
+    document.getElementById('bendVal').textContent = deg + '°';
+    document.getElementById('areaA').textContent = (drawStrip(document.getElementById('bendA'), LAYOUT_A, th) * 100).toFixed(1) + '%';
+    document.getElementById('areaB').textContent = (drawStrip(document.getElementById('bendB'), LAYOUT_B, th) * 100).toFixed(1) + '%';
+  }
+  bend.addEventListener('input', updateBend);
+  updateBend();
+
+  // ---------- Hands-on checklist ----------
+  document.querySelectorAll('#lookFor input').forEach(cb => {
+    try { cb.checked = localStorage.getItem('m0-' + cb.id) === '1'; } catch (e) {}
+    cb.addEventListener('change', () => { try { localStorage.setItem('m0-' + cb.id, cb.checked ? '1' : '0'); } catch (e) {} });
+  });
+
+  // ---------- Decisions ----------
+  const labels = { 'all-quad': 'All-quad by default', 'quad-dominant': 'Quad-dominant by default', 'per-objective': 'Depends on the objective (all-quad for characters, organic and hard surface; quad-dominant for static game assets)' };
+  const rankNames = { rk1: 'Deformable characters', rk2: 'Organic sculpts and scans', rk3: 'Hard-surface', rk4: 'Static game props' };
+  function answers() {
+    const d1 = document.querySelector('input[name=d1]:checked').value;
+    const ranks = Object.keys(rankNames).map(id => [+document.getElementById(id).value, rankNames[id]]).sort((a, b) => a[0] - b[0]);
+    const dup = new Set(ranks.map(r => r[0])).size !== ranks.length;
+    return 'Module 0 decisions\n' +
+      '001 Output mode: ' + labels[d1] + '\n' +
+      '002 Priorities: ' + ranks.map(r => r[0] + '. ' + r[1]).join('; ') + (dup ? '  (note: two items share a rank)' : '') + '\n' +
+      'Observations from the hands-on: ';
+  }
+  const ta = document.getElementById('answers');
+  const refresh = () => { ta.value = answers(); };
+  document.querySelectorAll('input[name=d1], #rank select').forEach(e => e.addEventListener('change', refresh));
+  refresh();
+  document.getElementById('btnCopy').addEventListener('click', () => {
+    refresh();
+    const st = document.getElementById('copyStatus');
+    const fallback = () => { ta.focus(); ta.select(); st.textContent = 'Copying is blocked here. The text is selected, so press Ctrl+C.'; };
+    try {
+      navigator.clipboard.writeText(ta.value).then(() => { st.textContent = 'Copied. Paste it into the chat and add your observations.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>

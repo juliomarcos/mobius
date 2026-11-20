@@ -1,0 +1,717 @@
+<title>Mobius Coding Style</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #16202c;
+  --muted: #566273;
+  --line: #d3dae3;
+  --face: #e9eef5;
+  --edge: #8794a6;
+  --accent: #2b55c9;
+  --accent-soft: #dfe7fb;
+  --pole3: #0b8a80;
+  --pole5: #c9711d;
+  --pole6: #c0364a;
+  --ghost: #aab4c2;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+    --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+    --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #151c25; --ink: #e5eaf1; --muted: #9ba7b6; --line: #2a3542;
+  --face: #1b2430; --edge: #5f6d80; --accent: #7f9dff; --accent-soft: #1f2a46;
+  --pole3: #3bc6b8; --pole5: #f0a04a; --pole6: #ff6b7c; --ghost: #4a5666; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+main { display: grid; gap: 56px; max-width: 1040px; margin: 0 auto; min-width: 0; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); font-weight: 650; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; min-width: 0; }
+.stack { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.13rem; color: var(--ink); max-width: 64ch; }
+.muted { color: var(--muted); }
+a { color: var(--accent); }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; overflow-wrap: anywhere; }
+header.top { display: grid; gap: 16px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: 500 0.85rem var(--font-body); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.note { font-size: 0.92rem; color: var(--muted); }
+.note strong { color: var(--ink); }
+.callout { border-left: 3px solid var(--pole5); padding-left: 10px; }
+ul.points { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+
+/* Decisions */
+.decision { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.decision .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; min-width: 0; }
+.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.option input { margin-top: 5px; accent-color: var(--accent); }
+.option strong { font-weight: 600; }
+.option .why { grid-column: 2; font-size: 0.9rem; color: var(--muted); }
+.option .code { grid-column: 2; min-width: 0; overflow-x: auto; background: var(--face); border: 1px solid var(--line); border-radius: 6px; }
+.option pre { margin: 0; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; color: var(--ink); tab-size: 4; }
+.option pre code { font-size: inherit; overflow-wrap: normal; }
+.rec { font-size: 0.78rem; font-family: var(--font-mono); color: var(--accent); margin-left: 6px; }
+textarea { width: 100%; min-height: 360px; font: 0.88rem var(--font-mono); padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.status { font-size: 0.88rem; color: var(--muted); min-height: 1.4em; }
+footer { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 10px; font-size: 0.9rem; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <header class="top">
+    <span class="eyebrow">Mobius · Coding style · gate 2.0</span>
+    <h1>Mobius coding style</h1>
+    <p class="lede">Before any engine code is written, we fix how it will look and how it will be organised. Your answers here become docs/coding-style.md, an .editorconfig and possibly a .clang-format file. Every card has a recommendation already selected, so you can change only the ones you disagree with.</p>
+    <div class="meta-row"><span>20 decisions</span><span>4 sections</span><span>~25 minutes</span></div>
+  </header>
+
+  <section aria-labelledby="s-fixed">
+    <div class="panel">
+      <span class="eyebrow">Already decided</span>
+      <h2 id="s-fixed">Fixed choices, not up for a vote</h2>
+      <ul class="points">
+        <li><strong>Compiler.</strong> MSVC only (Visual Studio 2026, toolset 14.52 or newer), built with /std:c++latest. C++23 is the guaranteed baseline, and a separate /std:c++23 build must also pass. Newer language features only appear behind feature-test macros.</li>
+        <li><strong>Tools.</strong> Sharpmake builds the project, doctest runs the tests, simdjson parses JSON and we write our own JSON writer.</li>
+        <li><strong>Folders.</strong> engine/core/{math, mesh, analysis, symmetry, guidance, backend, pipeline, io, eval}, plus engine/core/ops/retopo, engine/capi, engine/cli, tests/unit and tests/regression. The root namespace is mobius.</li>
+        <li><strong>Mesh data.</strong> Meshes use structure-of-arrays storage with uint32_t indices. Maths types (Vec&lt;T,N&gt;, Mat&lt;T,R,C&gt;, Frame) are plain value types.</li>
+        <li><strong>Public C API.</strong> A C99 header with a mobius_ prefix, snake_case functions, opaque handles such as mobius_mesh* and status-code returns. The Blender addon calls it through ctypes. Example: <code>mobius_status mobius_mesh_load(const char* path, mobius_mesh** out);</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="s1">
+    <div class="prose stack">
+      <span class="eyebrow">1 · Naming</span>
+      <h2 id="s1">Names of things</h2>
+      <p>These choices decide how every line of Mobius reads. They are cheap to set now and expensive to change later.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d01-title" data-num="01" data-title="Type names">
+      <span class="tag">Decision 01 of 20</span>
+      <h3 id="d01-title">How should classes, structs, enums and aliases be spelled?</h3>
+      <p class="note"><strong>Type names.</strong> Types are the nouns of the code. A clear spelling lets you tell a type from a variable at a glance, for example Frame versus frame.</p>
+      <label class="option"><input type="radio" name="d01" value="0" data-label="PascalCase" checked><strong>PascalCase<span class="rec">recommended</span></strong><div class="code"><pre><code>struct CurvatureResult {
+    double k1;
+    double k2;
+    Vec3d dir1;
+};
+
+class HalfEdgeMesh;
+using VertexIndex = Index&lt;struct VertexTag&gt;;
+
+template &lt;typename T, int N&gt;
+struct Vec;</code></pre></div><span class="why">Types never collide with variables (Frame frame). Differs from the standard library, so std:: types look different from ours.</span></label>
+      <label class="option"><input type="radio" name="d01" value="1" data-label="snake_case (std style)"><strong>snake_case (std style)</strong><div class="code"><pre><code>struct curvature_result {
+    double k1;
+    double k2;
+    vec3d dir1;
+};
+
+class half_edge_mesh;
+using vertex_index = index&lt;struct vertex_tag&gt;;
+
+template &lt;typename T, int N&gt;
+struct vec;</code></pre></div><span class="why">Matches std::vector and std::expected, so everything looks uniform. Types and variables share a spelling, so you need other tricks to tell them apart (frame frame).</span></label>
+      <p class="note"><strong>Recommendation:</strong> PascalCase keeps types visually separate from functions and variables. Math code often wants a variable named after its type, and PascalCase makes that legal and readable.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d02-title" data-num="02" data-title="Function and variable names">
+      <span class="tag">Decision 02 of 20</span>
+      <h3 id="d02-title">How should functions, methods, local variables and parameters be spelled?</h3>
+      <p class="note"><strong>Function and variable names.</strong> Most of the code you read is functions and variables. This choice also decides whether the C++ code and the C API look related.</p>
+      <label class="option"><input type="radio" name="d02" value="0" data-label="snake_case" checked><strong>snake_case<span class="rec">recommended</span></strong><div class="code"><pre><code>auto principal_curvatures(const HalfEdgeMesh&amp; mesh, VertexIndex v)
+    -&gt; std::expected&lt;CurvatureResult, Error&gt;
+{
+    const double mean_curvature = estimate_mean(mesh, v);
+    const double gaussian_curvature = estimate_gauss(mesh, v);
+    return solve_principal(mean_curvature, gaussian_curvature);
+}</code></pre></div><span class="why">Same style as std and as the C API (mobius_mesh_load). Long names are slightly wider than camelCase.</span></label>
+      <label class="option"><input type="radio" name="d02" value="1" data-label="camelCase"><strong>camelCase</strong><div class="code"><pre><code>auto principalCurvatures(const HalfEdgeMesh&amp; mesh, VertexIndex v)
+    -&gt; std::expected&lt;CurvatureResult, Error&gt;
+{
+    const double meanCurvature = estimateMean(mesh, v);
+    const double gaussianCurvature = estimateGauss(mesh, v);
+    return solvePrincipal(meanCurvature, gaussianCurvature);
+}</code></pre></div><span class="why">Common in game engines and Unreal-style code. The C API would still be snake_case, so the two layers would look different.</span></label>
+      <p class="note"><strong>Recommendation:</strong> snake_case matches the standard library, which your code calls constantly, and it matches the fixed C API names. The Blender addon in Python also uses snake_case.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d03-title" data-num="03" data-title="Private data members">
+      <span class="tag">Decision 03 of 20</span>
+      <h3 id="d03-title">How should private member variables of a class be marked?</h3>
+      <p class="note"><strong>Private data members.</strong> Inside a method you want to see at once whether a name is a local variable or part of the object. It also avoids clashes between constructor parameters and members.</p>
+      <label class="option"><input type="radio" name="d03" value="0" data-label="Trailing underscore: count_" checked><strong>Trailing underscore: count_<span class="rec">recommended</span></strong><div class="code"><pre><code>class WorkingMesh {
+public:
+    explicit WorkingMesh(std::size_t count) : count_(count) {}
+    std::size_t vertex_count() const { return count_; }
+
+private:
+    std::size_t count_;
+    std::vector&lt;Vec3d&gt; positions_;
+};</code></pre></div><span class="why">Short, and used by Google style and the Core Guidelines examples. Looks odd for the first day.</span></label>
+      <label class="option"><input type="radio" name="d03" value="1" data-label="Prefix: m_count"><strong>Prefix: m_count</strong><div class="code"><pre><code>class WorkingMesh {
+public:
+    explicit WorkingMesh(std::size_t count) : m_count(count) {}
+    std::size_t vertex_count() const { return m_count; }
+
+private:
+    std::size_t m_count;
+    std::vector&lt;Vec3d&gt; m_positions;
+};</code></pre></div><span class="why">Very explicit, common in Windows and Qt code. Makes every line a little noisier.</span></label>
+      <label class="option"><input type="radio" name="d03" value="2" data-label="No marker: count"><strong>No marker: count</strong><div class="code"><pre><code>class WorkingMesh {
+public:
+    explicit WorkingMesh(std::size_t count) : count(count) {}
+    std::size_t vertex_count() const { return count; }
+
+private:
+    std::size_t count;
+    std::vector&lt;Vec3d&gt; positions;
+};</code></pre></div><span class="why">Cleanest to read. You cannot tell a member from a local at a glance, and a parameter named count shadows the member.</span></label>
+      <p class="note"><strong>Recommendation:</strong> A trailing underscore is short and clear. It also lets a struct with public members (no underscore) and a class with private members be told apart in any code snippet.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d04-title" data-num="04" data-title="Constants and enumerators">
+      <span class="tag">Decision 04 of 20</span>
+      <h3 id="d04-title">How should constants and enum values be spelled?</h3>
+      <p class="note"><strong>Constants and enumerators.</strong> Constants appear in solver settings and enum options all over the pipeline. Some spellings clash with macros that Windows headers define, which causes confusing compile errors.</p>
+      <label class="option"><input type="radio" name="d04" value="0" data-label="PascalCase" checked><strong>PascalCase<span class="rec">recommended</span></strong><div class="code"><pre><code>enum class SymmetryKind { None, Mirror, Radial };
+
+inline constexpr int MaxIterations = 50;
+inline constexpr double ConvergenceTolerance = 1e-9;
+
+if (kind == SymmetryKind::Mirror) {
+    solve_mirrored(field, MaxIterations);
+}</code></pre></div><span class="why">Reads like a type name, which is fine because enumerators are always qualified (SymmetryKind::Mirror). Avoids the clash with Windows macros such as ERROR, NEAR and FAR.</span></label>
+      <label class="option"><input type="radio" name="d04" value="1" data-label="UPPER_CASE"><strong>UPPER_CASE</strong><div class="code"><pre><code>enum class SymmetryKind { NONE, MIRROR, RADIAL };
+
+inline constexpr int MAX_ITERATIONS = 50;
+inline constexpr double CONVERGENCE_TOLERANCE = 1e-9;
+
+if (kind == SymmetryKind::MIRROR) {
+    solve_mirrored(field, MAX_ITERATIONS);
+}</code></pre></div><span class="why">Familiar from C. Risks collisions with macros from system headers, and it makes constants shout.</span></label>
+      <label class="option"><input type="radio" name="d04" value="2" data-label="kPascalCase"><strong>kPascalCase</strong><div class="code"><pre><code>enum class SymmetryKind { kNone, kMirror, kRadial };
+
+inline constexpr int kMaxIterations = 50;
+inline constexpr double kConvergenceTolerance = 1e-9;
+
+if (kind == SymmetryKind::kMirror) {
+    solve_mirrored(field, kMaxIterations);
+}</code></pre></div><span class="why">Used by Google style. The k prefix is extra noise when the enum name already qualifies the value.</span></label>
+      <p class="note"><strong>Recommendation:</strong> PascalCase is short, avoids macro clashes, and the qualified enum name already tells you what it is. Macros are always MOBIUS_UPPER_CASE (fixed), so a constant and a macro can never be confused.</p>
+      <p class="note callout"><strong>Note.</strong> Fixed: macros are always MOBIUS_UPPER_CASE, for example MOBIUS_ASSERT and MOBIUS_API.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d05-title" data-num="05" data-title="File names and extensions">
+      <span class="tag">Decision 05 of 20</span>
+      <h3 id="d05-title">How should source files be named, and which extension do C++ headers use?</h3>
+      <p class="note"><strong>File names and extensions.</strong> File names show up in every include line, in Sharpmake, in test paths and in the Blender addon docs. The C API header stays mobius.h (C99) whatever you pick here.</p>
+      <label class="option"><input type="radio" name="d05" value="0" data-label="snake_case with .hpp and .cpp" checked><strong>snake_case with .hpp and .cpp<span class="rec">recommended</span></strong><div class="code"><pre><code>engine/core/math/vec.hpp
+engine/core/mesh/half_edge_mesh.hpp
+engine/core/mesh/half_edge_mesh.cpp
+engine/core/analysis/curvature.cpp
+engine/capi/mobius.h
+
+#include "core/mesh/half_edge_mesh.hpp"</code></pre></div><span class="why">.hpp tells the reader and tools that this header is C++ only. Works well on case-insensitive Windows and on Linux later.</span></label>
+      <label class="option"><input type="radio" name="d05" value="1" data-label="PascalCase with .hpp and .cpp"><strong>PascalCase with .hpp and .cpp</strong><div class="code"><pre><code>engine/core/math/Vec.hpp
+engine/core/mesh/HalfEdgeMesh.hpp
+engine/core/mesh/HalfEdgeMesh.cpp
+engine/core/analysis/Curvature.cpp
+engine/capi/mobius.h
+
+#include "core/mesh/HalfEdgeMesh.hpp"</code></pre></div><span class="why">File name equals the class name, easy to find. Windows ignores letter case, so a later Linux build can break on a wrongly cased include.</span></label>
+      <label class="option"><input type="radio" name="d05" value="2" data-label="snake_case with .h and .cpp"><strong>snake_case with .h and .cpp</strong><div class="code"><pre><code>engine/core/math/vec.h
+engine/core/mesh/half_edge_mesh.h
+engine/core/mesh/half_edge_mesh.cpp
+engine/core/analysis/curvature.cpp
+engine/capi/mobius.h
+
+#include "core/mesh/half_edge_mesh.h"</code></pre></div><span class="why">Common in many projects. A .h file could be C or C++, so tools sometimes guess wrong and the C API header looks the same as the rest.</span></label>
+      <p class="note"><strong>Recommendation:</strong> snake_case files match the function and namespace style, avoid case problems across systems, and .hpp keeps the C header (.h) clearly separate.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <div class="prose stack">
+      <span class="eyebrow">2 · Layout and formatting</span>
+      <h2 id="s2">How the code looks on the page</h2>
+      <p>Formatting is the part a tool can do for you. Decide it once so nobody ever argues about it again.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d06-title" data-num="06" data-title="Automatic formatting">
+      <span class="tag">Decision 06 of 20</span>
+      <h3 id="d06-title">Should a tool format the code automatically, or do we format by hand following the rules?</h3>
+      <p class="note"><strong>Automatic formatting.</strong> Automatic formatting removes style noise from reviews and keeps AI-written and hand-written code identical. clang-format ships with Visual Studio. It only formats text and does not compile anything, so it does not conflict with the MSVC-only rule. It is still a new tool in the project, so you need to approve it.</p>
+      <label class="option"><input type="radio" name="d06" value="0" data-label="clang-format with a committed .clang-format and format-on-save" checked><strong>clang-format with a committed .clang-format and format-on-save<span class="rec">recommended</span></strong><div class="code"><pre><code># .clang-format (committed at the repo root)
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+PointerAlignment: Left
+SortIncludes: CaseSensitive
+
+# Visual Studio: Tools &gt; Options &gt; Text Editor &gt; C/C++ &gt;
+#   Code Style &gt; Formatting: enable ClangFormat support.
+# Format on save: Code Cleanup "run on save" with
+#   Format Document, or Ctrl+K, Ctrl+D by hand.</code></pre></div><span class="why">Zero formatting effort and identical code everywhere. One more config file to keep. Needs your explicit approval to adopt clang-format.</span></label>
+      <label class="option"><input type="radio" name="d06" value="1" data-label="Manual formatting by convention only"><strong>Manual formatting by convention only</strong><div class="code"><pre><code># docs/coding-style.md says:
+#   4 spaces, K&amp;R braces, 100 columns,
+#   const Vec3d&amp; p, T* ptr.
+#
+# .editorconfig covers only indent size,
+# line endings and trailing whitespace.
+#
+# Reviewers fix style by hand.</code></pre></div><span class="why">No extra tool. Style drifts over time and every review spends effort on spacing.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Because Mobius code will be written in many sessions, a tool keeps it consistent for free. A .editorconfig is added in both cases. Please confirm explicitly that you approve clang-format.</p>
+      <p class="note callout"><strong>Note.</strong> Exact menu names can differ between Visual Studio versions. If format on save is not offered for C++ in yours, the fallback is formatting with Ctrl+K, Ctrl+D or a script in tools/, with the same .clang-format file.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d07-title" data-num="07" data-title="Brace style">
+      <span class="tag">Decision 07 of 20</span>
+      <h3 id="d07-title">Where does the opening brace go?</h3>
+      <p class="note"><strong>Brace style.</strong> Math-heavy code has many short blocks. The brace style decides how much of a function fits on the screen. Indent is 4 spaces in both options.</p>
+      <label class="option"><input type="radio" name="d07" value="0" data-label="K&amp;R: brace on the same line" checked><strong>K&amp;R: brace on the same line<span class="rec">recommended</span></strong><div class="code"><pre><code>double cotangent_weight(const Vec3d&amp; a, const Vec3d&amp; b, const Vec3d&amp; c) {
+    const Vec3d u = a - c;
+    const Vec3d v = b - c;
+    if (length(cross(u, v)) &lt; Epsilon) {
+        return 0.0;
+    }
+    return dot(u, v) / length(cross(u, v));
+}</code></pre></div><span class="why">Compact, which suits short maths functions. Long signatures can make the brace hard to see.</span></label>
+      <label class="option"><input type="radio" name="d07" value="1" data-label="Allman: brace on its own line"><strong>Allman: brace on its own line</strong><div class="code"><pre><code>double cotangent_weight(const Vec3d&amp; a, const Vec3d&amp; b, const Vec3d&amp; c)
+{
+    const Vec3d u = a - c;
+    const Vec3d v = b - c;
+    if (length(cross(u, v)) &lt; Epsilon)
+    {
+        return 0.0;
+    }
+    return dot(u, v) / length(cross(u, v));
+}</code></pre></div><span class="why">Braces line up and blocks are easy to see, which is the traditional Visual Studio look. Uses about 20 percent more vertical space.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Compact code lets you see a whole algorithm at once. clang-format can do K&amp;R with one setting, so it costs nothing to keep.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d08-title" data-num="08" data-title="Maximum line length">
+      <span class="tag">Decision 08 of 20</span>
+      <h3 id="d08-title">How many characters may a line have before it is wrapped?</h3>
+      <p class="note"><strong>Maximum line length.</strong> Long lines make diffs and side-by-side windows hard to read. Maths expressions and template signatures are the lines that push the limit.</p>
+      <label class="option"><input type="radio" name="d08" value="0" data-label="100 columns" checked><strong>100 columns<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto solve_cross_field(const HalfEdgeMesh&amp; mesh,
+                                const GuidanceSet&amp; guidance,
+                                const SolveOptions&amp; options)
+    -&gt; std::expected&lt;CrossField, Error&gt;;</code></pre></div><span class="why">Room for readable maths and still fits two windows side by side on a normal monitor.</span></label>
+      <label class="option"><input type="radio" name="d08" value="1" data-label="120 columns"><strong>120 columns</strong><div class="code"><pre><code>[[nodiscard]] auto solve_cross_field(const HalfEdgeMesh&amp; mesh, const GuidanceSet&amp; guidance, const SolveOptions&amp; options)
+    -&gt; std::expected&lt;CrossField, Error&gt;;</code></pre></div><span class="why">Fewer wraps. Lines get hard to read in diffs and in narrow panes.</span></label>
+      <label class="option"><input type="radio" name="d08" value="2" data-label="80 columns"><strong>80 columns</strong><div class="code"><pre><code>[[nodiscard]] auto solve_cross_field(
+    const HalfEdgeMesh&amp; mesh,
+    const GuidanceSet&amp; guidance,
+    const SolveOptions&amp; options)
+    -&gt; std::expected&lt;CrossField, Error&gt;;</code></pre></div><span class="why">The classic limit. Modern C++ names and templates wrap constantly, which hurts maths code.</span></label>
+      <p class="note"><strong>Recommendation:</strong> 100 is the usual middle ground for modern C++. It is also what the .clang-format sample uses.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d09-title" data-num="09" data-title="const and pointer placement">
+      <span class="tag">Decision 09 of 20</span>
+      <h3 id="d09-title">Where do const and the * or &amp; go in a declaration?</h3>
+      <p class="note"><strong>const and pointer placement.</strong> Every function parameter is affected, so this is in almost every line of the public headers.</p>
+      <label class="option"><input type="radio" name="d09" value="0" data-label="West const: const Vec3d&amp; p, T* ptr" checked><strong>West const: const Vec3d&amp; p, T* ptr<span class="rec">recommended</span></strong><div class="code"><pre><code>double distance(const Vec3d&amp; a, const Vec3d&amp; b);
+
+void fill_normals(const HalfEdgeMesh&amp; mesh, Vec3d* out_normals);
+
+const Vec3d* position_data(const WorkingMesh&amp; mesh);</code></pre></div><span class="why">The most common spelling and the one in most books, the Core Guidelines and the standard library docs. The pointer symbol attaches to the type.</span></label>
+      <label class="option"><input type="radio" name="d09" value="1" data-label="East const: Vec3d const&amp; p"><strong>East const: Vec3d const&amp; p</strong><div class="code"><pre><code>double distance(Vec3d const&amp; a, Vec3d const&amp; b);
+
+void fill_normals(HalfEdgeMesh const&amp; mesh, Vec3d* out_normals);
+
+Vec3d const* position_data(WorkingMesh const&amp; mesh);</code></pre></div><span class="why">Consistent rule: const always applies to what is on its left. Less familiar to most readers.</span></label>
+      <p class="note"><strong>Recommendation:</strong> West const is what most C++ you will read, and most code AI tools write, looks like. The star and ampersand stay with the type in both options.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d10-title" data-num="10" data-title="Include order">
+      <span class="tag">Decision 10 of 20</span>
+      <h3 id="d10-title">In what order are #include lines written?</h3>
+      <p class="note"><strong>Include order.</strong> A fixed order exposes missing includes. When a file includes its own header first, that header is proven to work on its own.</p>
+      <label class="option"><input type="radio" name="d10" value="0" data-label="Own header, Mobius, third-party, standard library" checked><strong>Own header, Mobius, third-party, standard library<span class="rec">recommended</span></strong><div class="code"><pre><code>// curvature.cpp
+#include "core/analysis/curvature.hpp"
+
+#include "core/math/vec.hpp"
+#include "core/mesh/half_edge_mesh.hpp"
+
+#include &lt;doctest/doctest.h&gt;
+#include &lt;simdjson.h&gt;
+
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;</code></pre></div><span class="why">Catches headers that forget their own includes. Each group is alphabetical with a blank line between groups.</span></label>
+      <label class="option"><input type="radio" name="d10" value="1" data-label="Standard library first"><strong>Standard library first</strong><div class="code"><pre><code>// curvature.cpp
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+
+#include &lt;simdjson.h&gt;
+
+#include "core/analysis/curvature.hpp"
+#include "core/math/vec.hpp"
+#include "core/mesh/half_edge_mesh.hpp"</code></pre></div><span class="why">Also common. A header with a missing include can be hidden because the standard headers came first.</span></label>
+      <p class="note"><strong>Recommendation:</strong> The own-header-first rule is recommended by the Core Guidelines and quietly finds a whole class of bugs. clang-format can sort this for you.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <div class="prose stack">
+      <span class="eyebrow">3 · Language usage</span>
+      <h2 id="s3">How we use C++ itself</h2>
+      <p>These choices affect correctness more than looks. They decide which mistakes the compiler can catch for us.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d11-title" data-num="11" data-title="Strong index types">
+      <span class="tag">Decision 11 of 20</span>
+      <h3 id="d11-title">Should a vertex index, a face index and an edge index be different types?</h3>
+      <p class="note"><strong>Strong index types.</strong> A mesh is many arrays addressed by integers. Mixing up a vertex index with a face index compiles fine with plain integers and produces wrong geometry that is very hard to find.</p>
+      <label class="option"><input type="radio" name="d11" value="0" data-label="Distinct types: VertexIndex, FaceIndex, EdgeIndex" checked><strong>Distinct types: VertexIndex, FaceIndex, EdgeIndex<span class="rec">recommended</span></strong><div class="code"><pre><code>template &lt;typename Tag&gt;
+struct Index {
+    uint32_t value = 0xFFFFFFFF;
+};
+using VertexIndex = Index&lt;struct VertexTag&gt;;
+using FaceIndex   = Index&lt;struct FaceTag&gt;;
+
+Vec3d vertex_position(const WorkingMesh&amp; m, VertexIndex v);
+
+FaceIndex f = first_face(mesh);
+vertex_position(mesh, f);  // compile error</code></pre></div><span class="why">The compiler catches the mix-up. The struct has the same size as uint32_t, so the SoA arrays keep the same memory layout. Needs a little extra typing at array access (.value).</span></label>
+      <label class="option"><input type="radio" name="d11" value="1" data-label="Plain uint32_t everywhere"><strong>Plain uint32_t everywhere</strong><div class="code"><pre><code>using Index = uint32_t;
+
+Vec3d vertex_position(const WorkingMesh&amp; m, Index v);
+
+Index f = first_face(mesh);
+vertex_position(mesh, f);  // compiles, silently
+                           // reads the wrong vertex</code></pre></div><span class="why">Simplest code and no wrappers. The face-for-vertex bug builds, runs and gives wrong results.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Retopology code constantly walks from vertices to faces to edges, which is exactly where this bug lives. The wrapper costs nothing at run time.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d12-title" data-num="12" data-title="Scalar precision">
+      <span class="tag">Decision 12 of 20</span>
+      <h3 id="d12-title">Which number type should geometry and solvers use inside the engine?</h3>
+      <p class="note"><strong>Scalar precision.</strong> Curvature, cross-field and quad extraction solves are sensitive to rounding. Blender stores float, so there is a conversion at the boundary either way.</p>
+      <label class="option"><input type="radio" name="d12" value="0" data-label="double inside, float only at I/O boundaries" checked><strong>double inside, float only at I/O boundaries<span class="rec">recommended</span></strong><div class="code"><pre><code>using Vec3d = Vec&lt;double, 3&gt;;
+
+struct WorkingMesh {
+    std::vector&lt;Vec3d&gt; positions;
+};
+
+WorkingMesh from_blender(const float* xyz, size_t n) {
+    WorkingMesh m;
+    for (size_t i = 0; i &lt; n; ++i)
+        m.positions.push_back({xyz[3*i], xyz[3*i+1], xyz[3*i+2]});
+    return m;
+}</code></pre></div><span class="why">Most robust and simplest to reason about. Uses about twice the memory for positions, which is small next to the solver data.</span></label>
+      <label class="option"><input type="radio" name="d12" value="1" data-label="float storage, double for solves"><strong>float storage, double for solves</strong><div class="code"><pre><code>struct WorkingMesh {
+    std::vector&lt;Vec3f&gt; positions;  // storage
+};
+
+double cotangent_weight(const WorkingMesh&amp; m, FaceIndex f) {
+    const Vec3d a = Vec3d(m.positions[...]);  // widen
+    // ... compute in double ...
+}</code></pre></div><span class="why">Half the memory for big meshes. Constant converting between two types, and rounding in storage can still show up.</span></label>
+      <label class="option"><input type="radio" name="d12" value="2" data-label="Templated scalar type"><strong>Templated scalar type</strong><div class="code"><pre><code>template &lt;typename Scalar&gt;
+class WorkingMeshT {
+    std::vector&lt;Vec&lt;Scalar, 3&gt;&gt; positions_;
+};
+
+template &lt;typename Scalar&gt;
+auto principal_curvatures(const WorkingMeshT&lt;Scalar&gt;&amp; m, VertexIndex v);</code></pre></div><span class="why">Maximum flexibility. Slower builds, heavier headers, and every function and test is written for two types.</span></label>
+      <p class="note"><strong>Recommendation:</strong> A single scalar type keeps the code simple and numerically safe. Performance can be revisited later if memory ever becomes the problem.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d13-title" data-num="13" data-title="Use of auto">
+      <span class="tag">Decision 13 of 20</span>
+      <h3 id="d13-title">When may you write auto instead of the full type?</h3>
+      <p class="note"><strong>Use of auto.</strong> auto saves typing and is required for lambdas, but it can hide what a variable is. This rule decides how much a reader has to guess.</p>
+      <label class="option"><input type="radio" name="d13" value="0" data-label="auto when the type is obvious or unspeakable" checked><strong>auto when the type is obvious or unspeakable<span class="rec">recommended</span></strong><div class="code"><pre><code>auto mesh = load_mesh(path);              // right side shows it
+auto it = faces.begin();                // iterator type is long
+auto weight = [](double a) { return a * a; };  // lambda: no name
+
+double mean_curvature = estimate_mean(mesh, v);  // keep: not obvious
+std::size_t count = mesh.vertex_count();         // keep: type matters</code></pre></div><span class="why">Readable and short. A short rule that is easy to follow and to review.</span></label>
+      <label class="option"><input type="radio" name="d13" value="1" data-label="Almost always auto"><strong>Almost always auto</strong><div class="code"><pre><code>auto mesh = load_mesh(path);
+auto count = mesh.vertex_count();
+auto mean_curvature = estimate_mean(mesh, v);
+auto weight = 0.5;
+auto n = 10;           // int? size_t?</code></pre></div><span class="why">Fewest types to write. Numeric types become guesses, which is risky in maths code (int versus size_t versus double).</span></label>
+      <label class="option"><input type="radio" name="d13" value="2" data-label="Avoid auto"><strong>Avoid auto</strong><div class="code"><pre><code>WorkingMesh mesh = load_mesh(path).value();
+std::vector&lt;FaceIndex&gt;::const_iterator it = faces.begin();
+// lambdas still need auto or std::function</code></pre></div><span class="why">Every type is spelled out. Long iterator names, and lambdas still need auto anyway.</span></label>
+      <p class="note"><strong>Recommendation:</strong> The middle rule is the one the Core Guidelines lean towards. It keeps numeric types visible, where mistakes are most costly.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d14-title" data-num="14" data-title="Error handling confirmation (D10)">
+      <span class="tag">Decision 14 of 20</span>
+      <h3 id="d14-title">Do you confirm the error model already designed in D10?</h3>
+      <p class="note"><strong>Error handling confirmation (D10).</strong> This decides what every function that can fail looks like. The C API cannot let a C++ exception cross the DLL boundary, so it needs status codes anyway.</p>
+      <label class="option"><input type="radio" name="d14" value="0" data-label="Confirm as designed" checked><strong>Confirm as designed<span class="rec">recommended</span></strong><div class="code"><pre><code>// Expected failures: std::expected
+auto load_mesh(std::string_view path)
+    -&gt; std::expected&lt;WorkingMesh, Error&gt;;
+
+// Programmer errors and out-of-memory: exceptions
+MOBIUS_ASSERT(index.value &lt; size());
+
+// C API: catches everything, returns a status code
+mobius_status mobius_mesh_load(const char* path, mobius_mesh** out);</code></pre></div><span class="why">Failures are visible in the type, nothing is thrown for a bad input file, and the C API stays simple.</span></label>
+      <label class="option"><input type="radio" name="d14" value="1" data-label="Exceptions everywhere"><strong>Exceptions everywhere</strong><div class="code"><pre><code>WorkingMesh load_mesh(std::string_view path);
+// throws MeshError on bad file
+
+try {
+    auto mesh = load_mesh(path);
+} catch (const MeshError&amp; e) {
+    report(e);
+}</code></pre></div><span class="why">Least code in the C++ layer. Bad input files are normal in this app, and throwing for them is slow and hides control flow.</span></label>
+      <label class="option"><input type="radio" name="d14" value="2" data-label="Error codes everywhere"><strong>Error codes everywhere</strong><div class="code"><pre><code>Status load_mesh(std::string_view path, WorkingMesh* out);
+
+WorkingMesh mesh;
+if (Status s = load_mesh(path, &amp;mesh); s != Status::Ok) {
+    return s;
+}</code></pre></div><span class="why">Same as the C API. Output parameters make functions awkward, and results are easy to ignore.</span></label>
+      <p class="note"><strong>Recommendation:</strong> It is the design already in D10. std::expected is in C++23, which is our guaranteed baseline.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d15-title" data-num="15" data-title="Use of [[nodiscard]]">
+      <span class="tag">Decision 15 of 20</span>
+      <h3 id="d15-title">Which functions should be marked [[nodiscard]]?</h3>
+      <p class="note"><strong>Use of [[nodiscard]].</strong> If a function returns an error or a computed result, ignoring it is almost always a bug. [[nodiscard]] makes the compiler warn about that.</p>
+      <label class="option"><input type="radio" name="d15" value="0" data-label="Every function returning std::expected or a computed value" checked><strong>Every function returning std::expected or a computed value<span class="rec">recommended</span></strong><div class="code"><pre><code>[[nodiscard]] auto load_mesh(std::string_view path)
+    -&gt; std::expected&lt;WorkingMesh, Error&gt;;
+
+[[nodiscard]] double mean_curvature(const HalfEdgeMesh&amp; m, VertexIndex v);
+
+[[nodiscard]] Vec3d normalize(const Vec3d&amp; v);
+
+mean_curvature(mesh, v);  // warning: result ignored</code></pre></div><span class="why">Catches forgotten results and misread operations like calling normalize() and expecting it to change its argument. More attributes to write, and clang-format does not add them.</span></label>
+      <label class="option"><input type="radio" name="d15" value="1" data-label="Only std::expected returns"><strong>Only std::expected returns</strong><div class="code"><pre><code>[[nodiscard]] auto load_mesh(std::string_view path)
+    -&gt; std::expected&lt;WorkingMesh, Error&gt;;
+
+double mean_curvature(const HalfEdgeMesh&amp; m, VertexIndex v);
+
+Vec3d normalize(const Vec3d&amp; v);
+
+normalize(v);  // compiles, does nothing</code></pre></div><span class="why">Protects against ignored errors only. Fewer attributes, but pure functions can still be called for no effect.</span></label>
+      <label class="option"><input type="radio" name="d15" value="2" data-label="Not used"><strong>Not used</strong><div class="code"><pre><code>auto load_mesh(std::string_view path)
+    -&gt; std::expected&lt;WorkingMesh, Error&gt;;
+
+load_mesh(path);  // error silently dropped</code></pre></div><span class="why">Nothing to remember. Errors can be silently dropped.</span></label>
+      <p class="note"><strong>Recommendation:</strong> With errors as return values, an ignored return is an ignored failure. The rule is simple: if it returns something useful, mark it.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d16-title" data-num="16" data-title="Classes and structs">
+      <span class="tag">Decision 16 of 20</span>
+      <h3 id="d16-title">When should a type be a struct and when a class?</h3>
+      <p class="note"><strong>Classes and structs.</strong> This decides which data is open for anyone to change and which is protected by member functions.</p>
+      <label class="option"><input type="radio" name="d16" value="0" data-label="struct for plain data, class when invariants must be protected" checked><strong>struct for plain data, class when invariants must be protected<span class="rec">recommended</span></strong><div class="code"><pre><code>struct CurvatureResult {      // plain data: all public
+    double k1;
+    double k2;
+};
+
+class HalfEdgeMesh {          // invariants: private data
+public:
+    VertexIndex next(VertexIndex v) const;
+protected:
+    void rebuild_links();
+private:
+    std::vector&lt;uint32_t&gt; next_;
+    std::vector&lt;uint32_t&gt; twin_;
+};</code></pre></div><span class="why">Plain data stays simple and fast. Order inside a class is public, then protected, then private, so the interface comes first.</span></label>
+      <label class="option"><input type="radio" name="d16" value="1" data-label="Always class with accessors"><strong>Always class with accessors</strong><div class="code"><pre><code>class CurvatureResult {
+public:
+    double k1() const { return k1_; }
+    double k2() const { return k2_; }
+    void set_k1(double v) { k1_ = v; }
+    void set_k2(double v) { k2_ = v; }
+private:
+    double k1_;
+    double k2_;
+};</code></pre></div><span class="why">One rule for everything. Lots of boilerplate for data that has no rules to protect, and it makes SoA arrays awkward.</span></label>
+      <p class="note"><strong>Recommendation:</strong> It is the Core Guidelines rule (C.2): use struct when members can vary independently, and class when there is an invariant.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="s4">
+    <div class="prose stack">
+      <span class="eyebrow">4 · Structure, comments and tests</span>
+      <h2 id="s4">How the project is organised</h2>
+      <p>These choices shape the folders, the build and what a new reader sees first.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d17-title" data-num="17" data-title="Headers or C++20 named modules">
+      <span class="tag">Decision 17 of 20</span>
+      <h3 id="d17-title">Should we organise code with header files, or with C++20 named modules?</h3>
+      <p class="note"><strong>Headers or C++20 named modules.</strong> This is the biggest structural choice. Modules can build faster and give cleaner boundaries, but they are the newest part of the language and the tools around them matter.</p>
+      <label class="option"><input type="radio" name="d17" value="0" data-label="Headers with #pragma once" checked><strong>Headers with #pragma once<span class="rec">recommended</span></strong><div class="code"><pre><code>// engine/core/math/vec.hpp
+#pragma once
+
+#include &lt;cstddef&gt;
+
+namespace mobius::math {
+template &lt;typename T, std::size_t N&gt;
+struct Vec { T data[N]; };
+}</code></pre></div><span class="why">Works with IntelliSense, clang-format, Sharpmake, doctest and every third-party library today. Can be migrated to modules later. Slower builds for large projects.</span></label>
+      <label class="option"><input type="radio" name="d17" value="1" data-label="C++20 named modules"><strong>C++20 named modules</strong><div class="code"><pre><code>// engine/core/math/vec.ixx
+export module mobius.math;
+
+import &lt;cstddef&gt;;
+
+export namespace mobius::math {
+template &lt;typename T, std::size_t N&gt;
+struct Vec { T data[N]; };
+}</code></pre></div><span class="why">Faster builds and strict boundaries between parts. Support in IntelliSense, clang-format and Sharpmake needs to be verified first, and third-party libraries still use headers.</span></label>
+      <p class="note"><strong>Recommendation:</strong> Headers are the safe, well-supported default and a later switch is possible. This is only a recommendation until modules are verified on this toolchain.</p>
+      <p class="note callout"><strong>Note.</strong> Modules need verification before anyone relies on them: check MSVC module support, IntelliSense, clang-format and Sharpmake handling in a small test project. Nothing here says it works or fails.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d18-title" data-num="18" data-title="Namespaces">
+      <span class="tag">Decision 18 of 20</span>
+      <h3 id="d18-title">How are namespaces arranged?</h3>
+      <p class="note"><strong>Namespaces.</strong> Namespaces keep names short inside a module and prevent clashes. They also show where each piece of code belongs.</p>
+      <label class="option"><input type="radio" name="d18" value="0" data-label="mobius:: plus one sub-namespace per core folder, detail for internals" checked><strong>mobius:: plus one sub-namespace per core folder, detail for internals<span class="rec">recommended</span></strong><div class="code"><pre><code>// engine/core/mesh/half_edge_mesh.hpp
+namespace mobius::mesh {
+class HalfEdgeMesh { /* ... */ };
+
+namespace detail {
+void link_twins(HalfEdgeMesh&amp; m);
+}
+}
+
+// engine/core/analysis/curvature.cpp
+mobius::mesh::HalfEdgeMesh mesh;
+mobius::analysis::principal_curvatures(mesh, v);</code></pre></div><span class="why">The folder name tells you the namespace. detail marks code users should not call. Slightly longer names outside the module.</span></label>
+      <label class="option"><input type="radio" name="d18" value="1" data-label="Flat mobius:: only"><strong>Flat mobius:: only</strong><div class="code"><pre><code>// engine/core/mesh/half_edge_mesh.hpp
+namespace mobius {
+class HalfEdgeMesh { /* ... */ };
+}
+
+// engine/core/analysis/curvature.cpp
+mobius::HalfEdgeMesh mesh;
+mobius::principal_curvatures(mesh, v);</code></pre></div><span class="why">Short and simple. Many names in one pool as the engine grows, so clashes become likely (for example solve in three modules).</span></label>
+      <p class="note"><strong>Recommendation:</strong> It mirrors the folder layout you already decided, so a reader can guess where code lives from its name.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d19-title" data-num="19" data-title="Comments and API documentation">
+      <span class="tag">Decision 19 of 20</span>
+      <h3 id="d19-title">How much commenting is expected, and in what style?</h3>
+      <p class="note"><strong>Comments and API documentation.</strong> Comments are how a non-expert reader, and tomorrow's session, learns what a function promises. The wrong kind goes stale quickly.</p>
+      <label class="option"><input type="radio" name="d19" value="0" data-label="/// brief on every public declaration, // for why inside implementations" checked><strong>/// brief on every public declaration, // for why inside implementations<span class="rec">recommended</span></strong><div class="code"><pre><code>/// Estimates the principal curvatures at vertex v.
+/// Returns an error if the one-ring of v is not closed.
+[[nodiscard]] auto principal_curvatures(const HalfEdgeMesh&amp; mesh, VertexIndex v)
+    -&gt; std::expected&lt;CurvatureResult, Error&gt;;
+
+// cpp file:
+// Use the cotangent weights because uniform weights bias the
+// result on irregular triangulations.
+const double w = cotangent_weight(a, b, c);</code></pre></div><span class="why">Headers act as documentation and Doxygen-compatible tools can read them. Inside code, comments explain reasons, not what the line obviously does.</span></label>
+      <label class="option"><input type="radio" name="d19" value="1" data-label="Comments only where needed"><strong>Comments only where needed</strong><div class="code"><pre><code>[[nodiscard]] auto principal_curvatures(const HalfEdgeMesh&amp; mesh, VertexIndex v)
+    -&gt; std::expected&lt;CurvatureResult, Error&gt;;
+
+// cpp file: only tricky places
+const double w = cotangent_weight(a, b, c);  // see Meyer 2003</code></pre></div><span class="why">Less to write and less to go out of date. New readers must read the code to learn what a function promises.</span></label>
+      <p class="note"><strong>Recommendation:</strong> A short brief on each public function is what lets an owner who is not a domain expert follow the headers. The "why" rule keeps implementation comments useful.</p>
+    </div>
+
+    <div class="decision" role="group" aria-labelledby="d20-title" data-num="20" data-title="Test layout and naming">
+      <span class="tag">Decision 20 of 20</span>
+      <h3 id="d20-title">How are the doctest tests organised and named?</h3>
+      <p class="note"><strong>Test layout and naming.</strong> When a test fails you want to find its source file immediately, and the failure message should say what was expected.</p>
+      <label class="option"><input type="radio" name="d20" value="0" data-label="One test file per source file, mirrored path, descriptive names with SUBCASE" checked><strong>One test file per source file, mirrored path, descriptive names with SUBCASE<span class="rec">recommended</span></strong><div class="code"><pre><code>// tests/unit/analysis/curvature_test.cpp
+// mirrors engine/core/analysis/curvature.cpp
+TEST_CASE("curvature: sphere principal curvatures within 5% of 1/r") {
+    const auto mesh = make_icosphere(1.0, 4);
+
+    SUBCASE("interior vertex") {
+        auto k = principal_curvatures(mesh, VertexIndex{10});
+        REQUIRE(k.has_value());
+        CHECK(k-&gt;k1 == doctest::Approx(1.0).epsilon(0.05));
+    }
+}</code></pre></div><span class="why">Easy to find the test for any file, and failure names read like sentences. Many small files.</span></label>
+      <label class="option"><input type="radio" name="d20" value="1" data-label="Grouped by feature"><strong>Grouped by feature</strong><div class="code"><pre><code>// tests/unit/curvature_tests.cpp
+// covers analysis/curvature.cpp and math/frame.cpp
+TEST_CASE("curvature") {
+    SUBCASE("sphere") { /* ... */ }
+    SUBCASE("cylinder") { /* ... */ }
+    SUBCASE("frame transform") { /* ... */ }
+}</code></pre></div><span class="why">Fewer files and related tests together. Harder to find by file, and files grow large over time.</span></label>
+      <p class="note"><strong>Recommendation:</strong> A mirrored layout makes it obvious what is tested and what is missing. The test name carries the expected result, which matters for the regression suite.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="s-answers">
+    <div class="prose stack">
+      <span class="eyebrow">Your answers</span>
+      <h2 id="s-answers">Copy and paste into the chat</h2>
+      <p>The box below always shows your current choices. Add anything else under Notes, then paste the text into the chat. Claude writes docs/coding-style.md and the config files from it.</p>
+    </div>
+    <div class="panel">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn primary" id="btnCopy">Copy my answers</button>
+        <span class="status" id="copyStatus" aria-live="polite"></span>
+      </div>
+      <textarea id="answers" readonly aria-label="Your answers as text"></textarea>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Sources and further reading</strong>
+    <ul>
+      <li>C++ Core Guidelines, <a href="https://isocpp.github.io/CppCoreGuidelines/" target="_blank" rel="noopener">isocpp.github.io/CppCoreGuidelines</a>. Background for naming, struct versus class, auto, [[nodiscard]] and include order.</li>
+      <li>clang-format documentation, <a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html" target="_blank" rel="noopener">clang.llvm.org/docs/ClangFormatStyleOptions.html</a>. Options for braces, column limit, pointer alignment and include sorting.</li>
+      <li>MSVC C++ modules documentation, <a href="https://learn.microsoft.com/cpp/cpp/modules-cpp" target="_blank" rel="noopener">learn.microsoft.com/cpp/cpp/modules-cpp</a>. Read this before deciding on named modules.</li>
+    </ul>
+  </footer>
+</main>
+
+<script>
+(function () {
+  const ta = document.getElementById('answers');
+  function answers() {
+    let out = 'Coding style decisions\n';
+    document.querySelectorAll('.decision').forEach(function (d) {
+      const c = d.querySelector('input[type=radio]:checked');
+      out += d.dataset.num + ' ' + d.dataset.title + ': ' + (c ? c.dataset.label : '(no answer)') + '\n';
+    });
+    return out + 'Notes: ';
+  }
+  const refresh = function () { ta.value = answers(); };
+  document.querySelectorAll('.decision input[type=radio]').forEach(function (e) { e.addEventListener('change', refresh); });
+  refresh();
+  document.getElementById('btnCopy').addEventListener('click', function () {
+    refresh();
+    const st = document.getElementById('copyStatus');
+    const fallback = function () { ta.focus(); ta.select(); st.textContent = 'Copying is blocked here. The text is selected, so press Ctrl+C.'; };
+    try {
+      navigator.clipboard.writeText(ta.value).then(function () { st.textContent = 'Copied. Paste it into the chat and add any notes.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>

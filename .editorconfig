@@ -1,0 +1,41 @@
+# Editor settings for Mobius. See docs/decisions/003-coding-style.md.
+# clang-format (.clang-format) is the authority for C++ layout; these
+# settings keep editors consistent for every other file type.
+root = true
+
+# Defaults for every file.
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# C++: interface units (.ixx), implementation units (.cpp), C API and macro headers (.h).
+[*.{h,ixx,cpp}]
+indent_size = 4
+max_line_length = 120
+
+# Sharpmake build scripts.
+[*.cs]
+indent_size = 4
+
+# Blender addon.
+[*.py]
+indent_size = 4
+max_line_length = 120
+
+# Data and config files.
+[*.{json,yml,yaml,toml}]
+indent_size = 2
+
+# Two trailing spaces mean a line break in Markdown.
+[*.md]
+trim_trailing_whitespace = false
+
+# Windows batch files need CRLF line endings.
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[*.ps1]
+indent_size = 4
